@@ -1,0 +1,149 @@
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+* {
+  box-sizing: border-box;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  background-color: #f4f7f6;
+  font-family: Arial, sans-serif;
+  overflow-x: hidden; /* Stops horizontal scrolling */
+}
+
+/* =========================================
+   2. SIGN UP PAGE (Split Screen)
+   ========================================= */
+.split-screen-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+}
+
+.left-pane {
+  flex: 1;               /* 50% width */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #1e7e48; /* The Dark Green Background */
+  padding: 20px;
+}
+
+.right-pane {
+  flex: 1;               /* 50% width */
+  background-color: #f0f0f0;
+}
+
+/* The White Card inside the Green Left Pane */
+.signcard {
+  background: white;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  width: 100%;
+  max-width: 400px;
+  text-align: left;
+}
+
+/* Sign Up Form Inputs */
+.signcard input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  display: block;
+}
+
+.signcard label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.signcard .donebtn {
+  width: 100%;
+  padding: 12px;
+  background-color: #1e7e48;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+/* The Image on the Right */
+.signupimg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Mobile Fix: Hide right side on phones */
+@media (max-width: 768px) {
+  .right-pane { display: none; }
+  .left-pane { flex: none; width: 100%; }
+}
+
+/* =========================================
+   3. LOGIN PAGE (Mint Green Door)
+   ========================================= */
+.login-container {
+  background-color: #aedec5; /* Mint Green */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* Blends the white corners of the image */
+.door-img {
+  width: 100%;
+  max-width: 550px;
+  display: block;
+  mix-blend-mode: multiply; /* <--- The Magic Fix */
+  margin-bottom: -20px;     /* Pulls inputs closer to image */
+}
+
+/* Login Inputs (Pills) */
+.login-input {
+  width: 100%;
+  max-width: 300px;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 50px;
+  border: none;
+  text-align: center;
+  outline: none;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.login-btn {
+  width: 100%;
+  max-width: 300px;
+  padding: 15px;
+  background-color: #1e7e48;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.login-btn:hover {
+  transform: translateY(-2px);
+  background-color: #166639;
+}

@@ -1,0 +1,63 @@
+.login-container {
+  background-color: #aedec5; 
+  height: 100vh; /* Fixed height to prevent scrolling */
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin: 0;
+}
+
+.door-wrapper {
+  display: flex;
+  justify-content: center;
+  max-height: 45vh; /* Limits image height */
+  margin-bottom: 20px;
+}
+
+.door-img {
+  height: auto;
+  max-height: 100%;
+  width: auto;
+  max-width: 450px; /* Smaller image size */
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 320px;
+
+}
+
+.login-input {
+  width: 100%;
+  padding: 12px 20px;
+  border-radius: 50px;
+  border: none;
+  background: white;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.login-btn {
+  background-color: #1e7e48;
+  color: white;
+  padding: 12px 50px;
+  border-radius: 50px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+}
+
+.login-links {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}

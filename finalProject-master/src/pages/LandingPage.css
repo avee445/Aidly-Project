@@ -1,0 +1,80 @@
+.landing-container {
+  background-color: #f4f7f6;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+}
+
+.landing-nav {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 5%;
+  align-items: center;
+  background: white;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+  color: #1e7e48;
+}
+
+.login-nav-btn {
+  background: none;
+  border: 1px solid #1e7e48;
+  color: #1e7e48;
+  padding: 8px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.hero-section {
+  text-align: center;
+  padding: 80px 10%;
+}
+
+.hero-section h1 {
+  font-size: 48px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.hero-actions {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 50px;
+}
+
+.hero-card {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  width: 300px;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+  transition: transform 0.3s;
+  border-top: 6px solid #1e7e48;
+}
+
+.hero-card:hover {
+  transform: translateY(-10px);
+}
+
+.features-grid {
+  display: flex;
+  justify-content: space-around;
+  padding: 60px 5%;
+  background: white;
+  margin-top: 50px;
+}
+
+.feature {
+  max-width: 250px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .hero-actions { flex-direction: column; align-items: center; }
+  .hero-section h1 { font-size: 32px; }
+}
