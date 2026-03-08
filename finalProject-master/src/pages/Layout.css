@@ -1,0 +1,97 @@
+/* הגדרות כלליות לכל האפליקציה */
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&display=swap');
+
+.layout-container {
+  font-family: 'Heebo', sans-serif; /* פונט עברי מודרני ואחיד לכל המסכים */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  color: #333;
+}
+
+/* עיצוב התפריט העליון */
+.main-header {
+  background-color: #1e7e48; /* ירוק עמותות */
+  color: white;
+  padding: 15px 30px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.logo-link {
+  text-decoration: none;
+  color: white;
+}
+
+.logo-text {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.main-nav {
+  display: flex;
+  gap: 20px;
+}
+
+.main-nav a {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
+  transition: opacity 0.3s;
+}
+
+.main-nav a:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+/* אזור התוכן המרכזי שמתרחב כדי לדחוף את הפוטר למטה */
+.main-content {
+  flex: 1;
+  padding: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* עיצוב הפוטר */
+.main-footer {
+  background-color: #2c3e50;
+  color: white;
+  text-align: center;
+  padding: 20px;
+  margin-top: auto;
+}
+
+.footer-content p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+.lang-btn {
+  background-color: transparent;
+  color: white;
+  border: 1px solid white;
+  padding: 5px 15px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+
+.lang-btn:hover {
+  background-color: white;
+  color: #1e7e48;
+}
