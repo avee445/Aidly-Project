@@ -1,69 +1,124 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import './AdminDashboard.css'; // אנחנו משתמשים בעיצוב הקיים כדי לחסוך זמן ולשמור על אחידות
+import logoImg from '../images/logo.png';
 
 const SeniorDashboard = () => {
-  // נתוני דוגמה (Mock Data) של בקשות העזרה שהקשיש כבר פתח
-  const [myRequests, setMyRequests] = useState([
-    { id: 1, task: "קניות בסופר (חלב, לחם, ביצים)", status: "done", volunteer: "Alice Brown", date: "20/02/2026" },
-    { id: 2, task: "איסוף תרופות מבית המרקחת", status: "pending", volunteer: "מחפש מתנדב...", date: "24/02/2026" }
-  ]);
-
-  // פונקציה שמדמה פתיחת קריאה חדשה
-  const handleNewRequest = () => {
-    alert("הבקשה שלך התקבלה בהצלחה! המנהל שלנו יאשר אותה וימצא לך מתנדב בקרוב.");
-  };
+  const myRequests = [
+    { 
+      date: "20/02/2026", 
+      task: "Purchasing medications", 
+      address: "12 Main St, Apt 4", 
+      urgency: "High 🔴", 
+      status: "Waiting for Volunteer ⏳", 
+      isWaiting: true 
+    },
+    { 
+      date: "24/02/2026", 
+      task: "Fixing a leak in the sink", 
+      address: "12 Main St, Apt 4", 
+      urgency: "Medium 🟡", 
+      status: "Completed ✅", 
+      isWaiting: false 
+    },
+    { 
+      date: "13/02/2026", 
+      task: "Grocery Shopping", 
+      address: "12 Main St, Apt 4", 
+      urgency: "Low 🟢", 
+      status: "Completed ✅", 
+      isWaiting: false 
+    },
+  ];
 
   return (
-    <div className="admin-wrapper">
-     <div className="dashboard-header">
-        <h2>אזור אישי - קשיש 👴👵</h2>
-        <div style={{ display: 'flex', gap: '15px' }}>
-          <Link to="/home"><button className="btn-logout" style={{ color: '#1e7e48' }}>🏠 עמוד הבית</button></Link>
-          <Link to="/"><button className="btn-logout">התנתקות</button></Link>
-        </div>
-      </div>
-
-      <div className="stats-card">
-        <h3>שלום, משה כהן</h3>
-        <p>כאן תוכל לראות את הבקשות שלך או לבקש עזרה חדשה בלחיצת כפתור.</p>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: '#f4f7f6', fontFamily: 'Segoe UI, Tahoma, sans-serif', margin: 0 }}>
+      
+      {/* Header */}
+      <header style={{ backgroundColor: '#1e7e48', padding: '15px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'white' }}>
         
-        <button 
-          className="action-btn" 
-          onClick={handleNewRequest} 
-          style={{ width: 'auto', padding: '10px 20px', marginBottom: '20px' }}
-        >
-          + בקש עזרה חדשה עכשיו
-        </button>
-
-        <div className="table-responsive">
-          <table>
-            <thead>
-              <tr>
-                <th>תאריך</th>
-                <th>מה ביקשתי?</th>
-                <th>סטטוס</th>
-                <th>מתנדב מטפל</th>
-              </tr>
-            </thead>
-            <tbody>
-              {myRequests.map((req) => (
-                <tr key={req.id}>
-                  <td>{req.date}</td>
-                  <td>{req.task}</td>
-                  <td>
-                    {/* צבע התגית משתנה לפי הסטטוס */}
-                    <span className={`status-tag ${req.status}`}>
-                      {req.status === 'pending' ? 'ממתין למתנדב' : 'טופל בהצלחה'}
-                    </span>
-                  </td>
-                  <td>{req.volunteer}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <Link to="/">
+  <img src={logoImg} alt="Aidly" style={{ height: '50px', cursor: 'pointer' }} />
+</Link>
+        <div style={{ fontWeight: 'bold', textAlign: 'center', fontSize: '18px' }}>
+          Welcome Mr.<br/>Abraham Cohen
         </div>
-      </div>
+        <Link to="/login" style={{ color: 'white', textDecoration: 'none', fontWeight: 'bold' }}>Logout</Link>
+      </header>
+
+      <main style={{ flex: 1, padding: '40px 20px', maxWidth: '1100px', margin: '0 auto', width: '100%' }}>
+        
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+          <h2 style={{ fontSize: '32px', fontWeight: 'bold', color: '#333' }}>Hello, Mr. Cohen! 👋</h2>
+          <Link to="/home" style={{ color: '#0000ff', textDecoration: 'none', fontWeight: 'bold' }}>← Back</Link>
+        </div>
+
+        <Link to="/senior/new-request" style={{ 
+          display: 'block', backgroundColor: '#438e5e', color: 'white', textDecoration: 'none',
+          textAlign: 'center', padding: '25px', borderRadius: '15px', fontSize: '24px', fontWeight: 'bold',
+          marginBottom: '50px', boxShadow: '0 6px 15px rgba(67, 142, 94, 0.3)'
+        }}>
+          + Request New Help Now
+        </Link>
+
+        <h3 style={{ fontSize: '24px', marginBottom: '20px', color: '#1e7e48' }}>My Recent Requests</h3>
+
+        <div style={{ backgroundColor: 'white', borderRadius: '15px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: '1fr 2fr 2fr 1fr 2fr', 
+            backgroundColor: '#eee', 
+            padding: '15px 20px', 
+            fontWeight: 'bold', 
+            fontSize: '16px',
+            textAlign: 'center'
+          }}>
+            <div>Date</div>
+            <div>Task</div>
+            <div>Address</div>
+            <div>Urgency</div>
+            <div>Status</div>
+          </div>
+
+          {myRequests.map((req, index) => (
+            <div key={index} style={{ 
+              display: 'grid', 
+              gridTemplateColumns: '1fr 2fr 2fr 1fr 2fr', 
+              padding: '20px', 
+              alignItems: 'center', 
+              textAlign: 'center',
+              borderBottom: index < myRequests.length - 1 ? '1px solid #eee' : 'none'
+            }}>
+              <div style={{ color: '#888' }}>{req.date}</div>
+              <div style={{ fontWeight: '600' }}>{req.task}</div>
+              <div style={{ color: '#555' }}>{req.address}</div>
+              <div>{req.urgency}</div>
+              <div>
+                <div style={{ 
+                  color: req.isWaiting ? '#d9534f' : '#438e5e', 
+                  fontWeight: 'bold',
+                  backgroundColor: req.isWaiting ? '#fff5f5' : '#f0fff4',
+                  padding: '8px',
+                  borderRadius: '20px',
+                  marginBottom: '5px'
+                }}>
+                  {req.status}
+                </div>
+                {/* כפתור משוב שמופיע רק כשהמשימה הושלמה */}
+                {!req.isWaiting && (
+                  <Link to="/senior/survey" style={{ color: '#0000ff', textDecoration: 'none', fontSize: '13px', fontWeight: 'bold' }}>
+                    Rate Volunteer ⭐
+                  </Link>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </main>
+
+      <footer style={{ backgroundColor: '#2c3a4f', color: 'white', textAlign: 'center', padding: '20px', fontSize: '14px', marginTop: '40px' }}>
+        © 2026 Aidly All Rights Reserved.<br />
+        Developed with love by Ibrahem & Malek.
+      </footer>
     </div>
   );
 };

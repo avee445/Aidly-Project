@@ -1,80 +1,109 @@
-.landing-container {
-  background-color: #f4f7f6;
+/* איפוס בסיסי ורקע לבן כמו בעיצוב */
+.landing-screen {
+  background-color: #ffffff;
   min-height: 100vh;
-  font-family: 'Inter', sans-serif;
-}
-
-.landing-nav {
   display: flex;
-  justify-content: space-between;
-  padding: 20px 5%;
+  flex-direction: column;
   align-items: center;
-  background: white;
+  justify-content: space-between;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
-.logo {
-  font-size: 24px;
-  font-weight: bold;
-  color: #1e7e48;
+.landing-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 400px;
+  padding: 40px 20px;
+  flex-grow: 1;
 }
 
-.login-nav-btn {
-  background: none;
-  border: 1px solid #1e7e48;
-  color: #1e7e48;
-  padding: 8px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.hero-section {
-  text-align: center;
-  padding: 80px 10%;
-}
-
-.hero-section h1 {
-  font-size: 48px;
-  color: #333;
+/* שילוב הלוגו והטקסט כמו שהמנחה ביקשה */
+.landing-logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
   margin-bottom: 20px;
 }
 
-.hero-actions {
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-  margin-top: 50px;
+.landing-title {
+  color: #1e7e48;
+  font-size: 65px;
+  font-weight: bold;
+  margin: 0;
+  letter-spacing: -1px;
 }
 
-.hero-card {
-  background: white;
-  padding: 30px;
-  border-radius: 15px;
-  width: 300px;
-  text-decoration: none;
-  color: inherit;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-  transition: transform 0.3s;
-  border-top: 6px solid #1e7e48;
+/* שים לב: פה אתה תשים את קובץ הלוגו שלך */
+.landing-logo-img {
+  width: 65px;
+  height: 65px;
+  object-fit: contain;
 }
 
-.hero-card:hover {
-  transform: translateY(-10px);
-}
-
-.features-grid {
-  display: flex;
-  justify-content: space-around;
-  padding: 60px 5%;
-  background: white;
-  margin-top: 50px;
-}
-
-.feature {
-  max-width: 250px;
+.landing-subtitle {
   text-align: center;
+  color: #333;
+  font-size: 18px;
+  margin-bottom: 40px;
+  line-height: 1.4;
+  font-weight: 500;
 }
 
-@media (max-width: 768px) {
-  .hero-actions { flex-direction: column; align-items: center; }
-  .hero-section h1 { font-size: 32px; }
+/* הכפתורים הירוקים הרגילים */
+.landing-buttons {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.landing-btn {
+  background-color: #438e5e; /* הירוק שציירת בכפתורים */
+  color: white;
+  text-align: center;
+  padding: 15px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 22px;
+  font-weight: 500;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  border: none;
+  cursor: pointer;
+}
+
+/* כפתור החירום התחתון */
+.landing-call-btn {
+  background-color: #5b6e46; /* הירוק-זית הכהה ששמתם לחיוג */
+  color: white;
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.landing-call-btn span {
+  font-size: 14px;
+  font-weight: normal;
+}
+
+/* הפוטר של איברהים ומאלק - יופיע בכל המסכים מעכשיו! */
+.global-footer {
+  background-color: #2c3a4f; /* הכחול הכהה מהעיצוב שלכם */
+  color: #a0abc0;
+  width: 100%;
+  text-align: center;
+  padding: 15px 0;
+  font-size: 12px;
+  line-height: 1.5;
 }

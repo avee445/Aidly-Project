@@ -1,124 +1,91 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import logoImg from '../images/logo.png'; 
 
 const VolunteerDashboard = () => {
   const navigate = useNavigate();
-  
-  // ניהול מצב (State) להצגת חלונית הסקר
-  const [showSurvey, setShowSurvey] = useState(false);
-  const [rating, setRating] = useState(0);
-  const [feedback, setFeedback] = useState("");
 
-  // נתוני דוגמה של המשימה הנוכחית
-  const myTask = {
+  const currentTask = {
     senior: "Mr. Jones",
     phone: "050-9999999",
     task: "Groceries (Milk, Bread, Eggs)",
-    location: "12 Main St, Apt 4",
+    address: "12 Main St, Apt 4",
     urgency: "High"
   };
 
-  // פונקציה שמופעלת כשלוחצים על סיום המשימה
-  const handleCompleteClick = () => {
-    setShowSurvey(true); // פותח את חלונית הסקר
-  };
-
-  // פונקציה שמופעלת כששולחים את הסקר
-  const handleSubmitFeedback = () => {
-    alert(`תודה רבה על המשוב! הדירוג שלך (${rating} כוכבים) נשמר במערכת.`);
-    setShowSurvey(false);
-    navigate('/home'); // מחזיר את המתנדב לעמוד הבית אחרי שסיים
+  const handleDone = () => {
+    // מעבר לדף הסקר לאחר סיום המשימה
+    navigate('/senior/survey');
   };
 
   return (
-    <div className="admin-wrapper">
-      <div className="dashboard-header">
-         <h2>אזור אישי - מתנדב 💚</h2>
-         <div style={{ display: 'flex', gap: '15px' }}>
-          <Link to="/home"><button className="btn-logout" style={{ color: '#1e7e48' }}>🏠 עמוד הבית</button></Link>
-          <Link to="/"><button className="btn-logout">התנתקות</button></Link>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: '#ffffff', fontFamily: 'Segoe UI, Tahoma, sans-serif', margin: 0 }}>
+      
+      {/* Header */}
+      <header style={{ backgroundColor: '#1e7e48', padding: '15px 30px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <img src={logoImg} alt="Aidly Logo" style={{ height: '40px' }} />
+        <div style={{ color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: '15px' }}>
+          Welcome ALEX<br/>SUID
         </div>
-      </div>
+        <div style={{ display: 'flex', gap: '15px' }}>
+            <Link to="/volunteer/history" style={{ color: 'white', textDecoration: 'none', fontSize: '14px', fontWeight: 'bold' }}>History</Link>
+            <Link to="/login" style={{ color: 'white', textDecoration: 'none', fontSize: '14px', fontWeight: 'bold' }}>Logout</Link>
+        </div>
+      </header>
 
-      <div className="stats-card">
-        <h3>המשימה שלי</h3>
-        <hr />
-        <div style={{ marginTop: '15px' }}>
-          <p><strong>Senior:</strong> {myTask.senior}</p>
-          <p><strong>Phone:</strong> {myTask.phone}</p>
-          <p><strong>Task:</strong> {myTask.task}</p>
-          <p><strong>Address:</strong> {myTask.location}</p>
-          <p><strong>Urgency:</strong> <span className="status-tag high">{myTask.urgency}</span></p>
+      {/* Main Content */}
+      <div style={{ flex: 1, padding: '20px', maxWidth: '500px', margin: '0 auto', width: '100%' }}>
+        
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+            <h2 style={{ fontSize: '22px', margin: 0 }}>Volunteer Dashboard 💚</h2>
+            <Link to="/home" style={{ color: '#0000ee', textDecoration: 'none', fontWeight: 'bold' }}>← Back</Link>
         </div>
 
-        <button 
-          className="donebtn" 
-          style={{ marginTop: '20px', padding: '15px', width: '100%', fontSize: '16px' }}
-          onClick={handleCompleteClick}
-        >
-          ✅ סימון המשימה כהושלמה
-        </button>
-      </div>
+        {/* משימה נוכחית */}
+        <div style={{ border: '1px solid #ddd', borderRadius: '10px', padding: '20px', marginBottom: '30px', boxShadow: '0 2px 5px rgba(0,0,0,0.05)' }}>
+          <h3 style={{ margin: '0 0 15px 0', borderBottom: '1px solid #eee', paddingBottom: '10px', fontSize: '18px', color: '#1e7e48' }}>My Current Task :</h3>
+          
+          <div style={{ fontSize: '15px', lineHeight: '1.8', color: '#333' }}>
+            <div><strong>Senior:</strong> {currentTask.senior}</div>
+            <div><strong>Phone:</strong> {currentTask.phone}</div>
+            <div><strong>Task:</strong> {currentTask.task}</div>
+            <div><strong>Address:</strong> {currentTask.address}</div>
+            <div><strong>Urgency:</strong> <span style={{ color: 'red' }}>🔴 High - Today</span></div>
+          </div>
 
-      {/* החלונית הקופצת (Modal) של הסקר */}
-      {showSurvey && (
-        <div style={modalOverlayStyle}>
-          <div style={modalContentStyle}>
-            <h2 style={{ color: '#1e7e48', marginBottom: '10px' }}>כל הכבוד! 🎉</h2>
-            <p>איך הייתה ההתנדבות עם {myTask.senior}?</p>
-            
-            <div style={{ margin: '20px 0', fontSize: '24px', cursor: 'pointer' }}>
-              {/* יצירת 5 כוכבי דירוג */}
-              {[1, 2, 3, 4, 5].map((star) => (
-                <span 
-                  key={star} 
-                  onClick={() => setRating(star)}
-                  style={{ color: star <= rating ? '#FFD700' : '#ccc', marginRight: '5px' }}
-                >
-                  ★
-                </span>
-              ))}
-            </div>
+          <button 
+            onClick={handleDone}
+            style={{ backgroundColor: '#438e5e', color: 'white', border: 'none', width: '100%', padding: '12px', borderRadius: '8px', fontWeight: 'bold', marginTop: '20px', cursor: 'pointer' }}
+          >
+            Mark Task as Done ✅
+          </button>
+        </div>
 
-            <textarea 
-              placeholder="ספר לנו בקצרה איך היה (אופציונלי)..." 
-              value={feedback}
-              onChange={(e) => setFeedback(e.target.value)}
-              style={{ width: '100%', height: '80px', padding: '10px', borderRadius: '8px', border: '1px solid #ddd', marginBottom: '15px', resize: 'none' }}
-            />
-
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <button className="donebtn" style={{ flex: 1, background: '#1e7e48', padding: '10px' }} onClick={handleSubmitFeedback}>
-                שליחת משוב וסיום
-              </button>
-              <button className="donebtn" style={{ flex: 1, background: '#888', padding: '10px' }} onClick={() => setShowSurvey(false)}>
-                ביטול
-              </button>
+        {/* רשימת המשימות שלי */}
+        <h3 style={{ fontSize: '18px', marginBottom: '15px' }}>My Tasks</h3>
+        <div style={{ border: '1px solid #ddd', borderRadius: '10px', padding: '15px' }}>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+            <span style={{ fontSize: '20px' }}>📋</span>
+            <div style={{ fontSize: '14px', lineHeight: '1.5' }}>
+                <strong>Task: Grocery Shopping</strong><br/>
+                Senior: Mr. Abraham Cohen<br/>
+                Phone: 📞 050-123-4567<br/>
+                Address: 12 Main Street, Apt 4<br/>
+                Urgency: <span style={{ color: 'red' }}>🔴 High</span>
             </div>
           </div>
+          <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
+            <button onClick={handleDone} style={{ flex: 1, backgroundColor: '#438e5e', color: 'white', border: 'none', padding: '8px', borderRadius: '5px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}>✅ Done</button>
+            <button style={{ flex: 1, backgroundColor: '#ff0000', color: 'white', border: 'none', padding: '8px', borderRadius: '5px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}>Cancel</button>
+          </div>
         </div>
-      )}
+      </div>
+
+      <footer style={{ backgroundColor: '#2c3a4f', color: '#a0abc0', textAlign: 'center', padding: '15px 0', fontSize: '12px', width: '100%' }}>
+        © 2026 Aidly All Rights Reserved.
+      </footer>
     </div>
   );
-};
-
-// עיצוב פנימי (Inline CSS) עבור החלונית הקופצת כדי שלא נצטרך לגעת בקבצי CSS נוספים
-const modalOverlayStyle = {
-  position: 'fixed',
-  top: 0, left: 0, width: '100%', height: '100%',
-  backgroundColor: 'rgba(0,0,0,0.5)',
-  display: 'flex', justifyContent: 'center', alignItems: 'center',
-  zIndex: 1000
-};
-
-const modalContentStyle = {
-  backgroundColor: '#fff',
-  padding: '30px',
-  borderRadius: '15px',
-  width: '90%',
-  maxWidth: '400px',
-  textAlign: 'center',
-  boxShadow: '0 5px 15px rgba(0,0,0,0.3)'
 };
 
 export default VolunteerDashboard;
