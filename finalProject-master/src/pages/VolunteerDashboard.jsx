@@ -23,7 +23,9 @@ const VolunteerDashboard = () => {
       
       {/* Header */}
       <header style={{ backgroundColor: '#1e7e48', padding: '15px 30px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <img src={logoImg} alt="Aidly Logo" style={{ height: '40px' }} />
+         <Link to="/">
+             <img src={logoImg} alt="Aidly" style={{ height: '50px', cursor: 'pointer' }} />
+             </Link>
         <div style={{ color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: '15px' }}>
           Welcome ALEX<br/>SUID
         </div>
@@ -81,8 +83,9 @@ const VolunteerDashboard = () => {
         </div>
       </div>
 
-      <footer style={{ backgroundColor: '#2c3a4f', color: '#a0abc0', textAlign: 'center', padding: '15px 0', fontSize: '12px', width: '100%' }}>
-        © 2026 Aidly All Rights Reserved.
+      <footer style={{ backgroundColor: '#2c3a4f', color: '#a0abc0', textAlign: 'center', padding: '20px 0', fontSize: '14px' }}>
+        <div>© 2026 Aidly All Rights Reserved.</div>
+        <div style={{ marginTop: '5px', fontSize: '12px' }}>Developed with love by Ibrahem & Malek.</div>
       </footer>
     </div>
   );
