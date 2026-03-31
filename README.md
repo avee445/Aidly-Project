@@ -1,44 +1,39 @@
-# Aidly  - Smart help, close to home
+# 🏡 Aidly - Smart Help, Close to Home
 
-מערכת חכמה המחברת בין אזרחים ותיקים למתנדבים בקהילה לסיוע במטלות בית קטנות.
-פרויקט זה פותח במסגרת פרויקט גמר על ידי אבראהים ומאלק.
+![React](https://img.shields.io/badge/Frontend-React.js-blue?logo=react)
+![Vite](https://img.shields.io/badge/Bundler-Vite-646CFF?logo=vite)
+![Status](https://img.shields.io/badge/Status-Prototype_Phase-success)
 
-##  דרישות מוקדמות (Prerequisites)
-כדי להריץ את הפרויקט על המחשב שלך, עליך לוודא שמותקן אצלך:
-* [Node.js](https://nodejs.org/) (גרסה עדכנית)
+[cite_start]**Aidly** היא מערכת חכמה וקהילתית המחברת בין אזרחים ותיקים הזקוקים לעזרה במטלות בית קטנות (כמו קניות, החלפת נורה או תמיכה טכנית) לבין מתנדבים זמינים בשכונה[cite: 58, 64]. 
 
-## התקנה והפעלה (Installation & Setup)
+פרויקט זה מפותח כפרויקט גמר, בדגש על חוויית משתמש (UX) מותאמת לגיל השלישי וניהול יעיל של מערך ההתנדבות.
 
-1. **פתיחת הפרויקט:**
-   פתח את תיקיית הפרויקט ב-Visual Studio Code (או בכל עורך קוד אחר).
+---
 
-2. **פתיחת טרמינל:**
-   פתח טרמינל חדש בתוך התיקייה של הפרויקט (ב-VS Code לחץ על `Ctrl` + `~`).
+## ✨ פיצ'רים מרכזיים (Key Features)
 
-3. **התקנת ספריות (Dependencies):**
-   הרץ את הפקודה הבאה כדי להתקין את כל חבילות התוכנה הנדרשות (React, React Router וכו'):
+* [cite_start]**👵 ממשק לאזרח הוותיק:** טופס פשוט, ברור ונגיש ליצירת בקשות עזרה וצפייה בהיסטוריית הבקשות [cite: 74-79].
+* [cite_start]**💚 לוח בקרת מתנדב:** צפייה במשימות זמינות, דיווח על סיום משימה ומתן משוב על החוויה [cite: 104-116].
+* [cite_start]**🛡️ דאשבורד מנהל (Admin):** תור בקשות (Request Queue), מערכת לאישור מתנדבים חדשים (Vetting), ושיוך חכם (Matching) בין בקשה למתנדב [cite: 84-98].
+
+---
+
+## 🛠️ טכנולוגיות (Tech Stack)
+
+* **צד לקוח (Frontend):** React.js, Vite, React-Router-DOM
+* **עיצוב (UI/UX):** Custom CSS / Inline Styling (בהתאם לאפיון ב-Figma)
+* **צד שרת ומסד נתונים (מתוכנן להמשך):** SQL Server / Node.js
+
+---
+
+## 🚀 התקנה והפעלה מקומית (Local Setup)
+
+כדי להריץ את אב-הטיפוס של המערכת על המחשב המקומי, עקוב אחר השלבים הבאים:
+
+1. **ודא שמותקן אצלך Node.js** על המחשב.
+2. **פתח את תיקיית הפרויקט** בטרמינל (Terminal).
+3. **התקן את חבילות התוכנה** על ידי הרצת הפקודה הבאה:
    ```bash
    npm install
-   הפעלת השרת המקומי:
-לאחר סיום ההתקנה, הרץ את הפקודה הבאה כדי להפעיל את האתר:
-
-**Bash**
-**1.cd finalProject-master**
-
-2**.npm run dev**
-
-
-## ניווט מהיר במערכת (System Routes)
-כדי לבדוק את המסכים השונים ללא צורך בהתחברות (בשלב האב-טיפוס), ניתן לנווט לכתובות הבאות:
-
-/ או /home - דף הבית (Landing Page)
-
-/login - מסך התחברות
-
-/admin - לוח הבקרה של המנהל (Admin Dashboard)
-
-/senior - לוח הבקרה של הקשיש (Senior Dashboard)
-
-/volunteer - לוח הבקרה של המתנדב (Volunteer Dashboard)
-
-© 2026 Aidly All Rights Reserved.
+הפעל את שרת הפיתוח:Bash npm run dev
+היכנס לדפדפן בכתובת המופיעה בטרמינל (לרוב http://localhost:5173).🗺️ מפת התמצאות באתר (System Navigation)ניתן לנווט ישירות בין מסכי המערכת דרך הכתובות הבאות:תפקיד / מסךכתובת ניתוב (URL)דף הבית (Landing Page)/ או /homeהתחברות (Login)/loginאזרח ותיק (Senior)/senior (דאשבורד), /senior/new-request (בקשה חדשה)מתנדב (Volunteer)/volunteer (דאשבורד), /volunteer/history (היסטוריה)מנהל (Admin)/admin (דאשבורד), /admin/requests (ניהול בקשות)👥 צוות הפרויקט (Project Team)מפתחים: אבראהים עיאד ומאלק ספורי מנחת הפרויקט: אורלי בנגל שנת פיתוח: 2026<p align="center"><i>Developed with love for the community 💚</i></p>
