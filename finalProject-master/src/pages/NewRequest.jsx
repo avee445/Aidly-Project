@@ -18,7 +18,7 @@ const NewRequest = () => {
     urgency: ""
   });
 
-  const welcomeMessage = isSenior ? "Welcome Mr.\nCohen" : "Welcome Admin\nIbrahem";
+  const welcomeMessage = isSenior ? "Welcome Mr.\nCohen" : "Welcome Admin\nCohen";
   const backPath = isSenior ? "/senior" : "/admin";
 
   const handleSave = (e) => {
@@ -30,16 +30,28 @@ const NewRequest = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: '#ffffff', fontFamily: 'Segoe UI, Tahoma, sans-serif', margin: 0 }}>
       
-      {/* Header */}
+      {/* Header מיושר מחדש: לוגו בשמאל, שם באמצע, כפתור בימין */}
       <header style={{ backgroundColor: '#1e7e48', padding: '10px 30px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'white' }}>
-        <img src={logoImg} alt="Aidly" style={{ height: '50px' }} />
-        <Link to="/">
-       <img src={logoImg} alt="Aidly" style={{ height: '50px', cursor: 'pointer' }} />
-       </Link>
-        <Link to={backPath} style={{ color: 'white', textDecoration: 'none', textAlign: 'center' }}>
-          <div style={{ fontSize: '20px' }}>←</div>
-          <div style={{ fontSize: '12px', fontWeight: 'bold' }}>Back</div>
-        </Link>
+        
+        {/* לוגו בצד שמאל (לחיץ) */}
+        <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-start' }}>
+            <Link to="/" style={{ display: 'flex', alignItems: 'center' }}>
+              <img src={logoImg} alt="Aidly" style={{ height: '50px', cursor: 'pointer' }} />
+            </Link>
+        </div>
+
+        {/* טקסט באמצע */}
+        <div style={{ fontWeight: 'bold', textAlign: 'center', whiteSpace: 'pre-line', fontSize: '16px', flex: 1 }}>
+          {welcomeMessage}
+        </div>
+
+        {/* כפתור חזרה בצד ימין */}
+        <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
+            <Link to={backPath} style={{ color: 'white', textDecoration: 'none', textAlign: 'center' }}>
+              <div style={{ fontSize: '20px', lineHeight: '1' }}>←</div>
+              <div style={{ fontSize: '12px', fontWeight: 'bold' }}>Back</div>
+            </Link>
+        </div>
       </header>
 
       <div style={{ flex: 1, padding: '40px 20px', maxWidth: '500px', margin: '0 auto', width: '100%' }}>
@@ -77,7 +89,7 @@ const NewRequest = () => {
             />
           </div>
 
-          {/* כתובת - שדה חדש שהוספנו */}
+          {/* כתובת */}
           <div>
             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#333' }}>Address</label>
             <input 
