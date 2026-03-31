@@ -22,10 +22,13 @@
    הפעלת השרת המקומי:
 לאחר סיום ההתקנה, הרץ את הפקודה הבאה כדי להפעיל את האתר:
 
-Bash
-1.cd finalProject-master
-2.npm run dev
-ניווט מהיר במערכת (System Routes)
+**Bash**
+**1.cd finalProject-master**
+
+2**.npm run dev**
+
+
+## ניווט מהיר במערכת (System Routes)
 כדי לבדוק את המסכים השונים ללא צורך בהתחברות (בשלב האב-טיפוס), ניתן לנווט לכתובות הבאות:
 
 / או /home - דף הבית (Landing Page)
