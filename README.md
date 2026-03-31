@@ -35,5 +35,27 @@
 3. **התקן את חבילות התוכנה** על ידי הרצת הפקודה הבאה:
    ```bash
    npm install
-הפעל את שרת הפיתוח:Bash npm run dev
-היכנס לדפדפן בכתובת המופיעה בטרמינל (לרוב http://localhost:5173).🗺️ מפת התמצאות באתר (System Navigation)ניתן לנווט ישירות בין מסכי המערכת דרך הכתובות הבאות:תפקיד / מסךכתובת ניתוב (URL)דף הבית (Landing Page)/ או /homeהתחברות (Login)/loginאזרח ותיק (Senior)/senior (דאשבורד), /senior/new-request (בקשה חדשה)מתנדב (Volunteer)/volunteer (דאשבורד), /volunteer/history (היסטוריה)מנהל (Admin)/admin (דאשבורד), /admin/requests (ניהול בקשות)👥 צוות הפרויקט (Project Team)מפתחים: אבראהים עיאד ומאלק ספורי מנחת הפרויקט: אורלי בנגל שנת פיתוח: 2026<p align="center"><i>Developed with love for the community 💚</i></p>
+הפעל את שרת הפיתוח:
+npm run dev
+היכנס לדפדפן בכתובת המופיעה בטרמינל (לרוב http://localhost:5173).
+
+🗺️ מפת התמצאות באתר (System Navigation)
+ניתן לנווט ישירות בין מסכי המערכת דרך הכתובות הבאות:
+תפקיד / מסך,כתובת ניתוב (URL)
+דף הבית (Landing Page),/ או /home
+התחברות (Login),/login
+אזרח ותיק (Senior),"/senior (דאשבורד), /senior/new-request (בקשה חדשה)"
+מתנדב (Volunteer),"/volunteer (דאשבורד), /volunteer/history (היסטוריה)"
+מנהל (Admin),"/admin (דאשבורד), /admin/requests (ניהול בקשות)"
+👥 צוות הפרויקט (Project Team)
+
+מפתחים: אבראהים עיאד ומאלק ספורי 
+
+
+מנחת הפרויקט: אורלי בנגל 
+
+שנת פיתוח: 2026
+
+<p align="center">
+<i>Developed with love for the community 💚</i>
+</p>
