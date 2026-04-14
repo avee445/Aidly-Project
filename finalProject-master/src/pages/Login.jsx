@@ -1,117 +1,68 @@
 import React, { useState } from 'react';
-import { useNavigate, useOutletContext } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import loginImg from '../images/login.png'; 
+import logoImg from '../images/logo.png'; 
 
 const Login = () => {
   const navigate = useNavigate();
-  const { lang } = useOutletContext(); 
-  
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [role, setRole] = useState(''); 
+  const [role, setRole] = useState('admin'); 
 
-  const texts = {
-    he: {
-      title: "התחברות למערכת",
-      subtitle: "אנא הזן את פרטיך כדי להתחבר:",
-      email: "אימייל",
-      password: "סיסמה",
-      selectRole: "-- בחר סוג משתמש --",
-      senior: "קשיש",
-      volunteer: "מתנדב",
-      admin: "מנהל",
-      loginBtn: "התחבר",
-      errorMsg: "נא למלא אימייל, סיסמה ולבחור סוג משתמש."
-    },
-    en: {
-      title: "System Login",
-      subtitle: "Please enter your details to log in:",
-      email: "Email",
-      password: "Password",
-      selectRole: "-- Select User Type --",
-      senior: "Senior",
-      volunteer: "Volunteer",
-      admin: "Admin",
-      loginBtn: "Log In",
-      errorMsg: "Please fill in email, password, and select a user type."
-    }
-  };
-
-  const t = texts[lang];
-
-  const handleLoginSubmit = (e) => {
-    e.preventDefault(); 
-    if (!email || !password || !role) {
-      alert(t.errorMsg);
-      return;
-    }
-    if (role === 'senior') navigate('/senior');
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (role === 'admin') navigate('/admin');
     else if (role === 'volunteer') navigate('/volunteer');
-    else if (role === 'admin') navigate('/admin');
+    else if (role === 'senior') navigate('/senior');
   };
 
   return (
-    <div style={{
-      /* שמתי כאן קישור חדש ותקין לתמונה מדהימה! */
-      backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=2069&auto=format&fit=crop")',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      minHeight: '80vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      borderRadius: '15px',
-      marginTop: '10px',
-      padding: '20px'
-    }}>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: '#ffffff', fontFamily: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif', margin: 0 }}>
       
-      <div style={{ 
-        backgroundColor: 'rgba(255, 255, 255, 0.95)', 
-        padding: '40px', 
-        borderRadius: '15px', 
-        boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
-        maxWidth: '400px',
-        width: '100%',
-        textAlign: 'center'
-      }}>
-        <h2 style={{ color: '#1e7e48', marginTop: 0 }}>{t.title}</h2>
-        <p style={{ color: '#555' }}>{t.subtitle}</p>
+      {/* --- Header (הסרגל הירוק העליון) --- */}
+      <header style={{ backgroundColor: '#1e7e48', padding: '15px 30px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+       <Link to="/">
+        <img src={logoImg} alt="Aidly" style={{ height: '50px', cursor: 'pointer' }} />
+        </Link>
+        
+      </header>
 
-        <form onSubmit={handleLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '20px' }}>
-          <input 
-            type="email" 
-            placeholder={t.email} 
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            style={{ padding: '12px', fontSize: '16px', borderRadius: '8px', border: '1px solid #ccc', textAlign: lang === 'he' ? 'right' : 'left' }}
-          />
-          <input 
-            type="password" 
-            placeholder={t.password} 
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={{ padding: '12px', fontSize: '16px', borderRadius: '8px', border: '1px solid #ccc', textAlign: lang === 'he' ? 'right' : 'left' }}
-          />
-          <select 
-            value={role} 
-            onChange={(e) => setRole(e.target.value)}
-            style={{ padding: '12px', fontSize: '16px', borderRadius: '8px', border: '1px solid #ccc', textAlign: lang === 'he' ? 'right' : 'left' }}
-          >
-            <option value="">{t.selectRole}</option>
-            <option value="senior">{t.senior}</option>
-            <option value="volunteer">{t.volunteer}</option>
-            <option value="admin">{t.admin}</option>
-          </select>
-          <button 
-            type="submit" 
-            style={{
-              padding: '12px', fontSize: '18px', fontWeight: 'bold', backgroundColor: '#1e7e48',
-              color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', marginTop: '10px'
-            }}
-          >
-            {t.loginBtn}
-          </button>
+      {/* --- תוכן מרכזי --- */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '40px 20px' }}>
+        
+        {/* תמונת ההתחברות (הדלת - שכבר כוללת את הלוגו בתוכה!) */}
+        <img src={loginImg} alt="Welcome" style={{ width: '100%', maxWidth: '350px', marginBottom: '30px' }} />
+
+        <form onSubmit={handleLogin} style={{ width: '100%', maxWidth: '400px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          
+          {/* כפתורי בחירת תפקיד */}
+          <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', marginBottom: '10px' }}>
+            <button type="button" onClick={() => setRole('admin')} style={{ flex: 1, padding: '12px', borderRadius: '10px', border: 'none', backgroundColor: role === 'admin' ? '#438e5e' : '#e0e0e0', color: role === 'admin' ? 'white' : '#555', cursor: 'pointer', fontWeight: 'bold', fontSize: '16px', transition: '0.2s' }}>admin</button>
+            <button type="button" onClick={() => setRole('volunteer')} style={{ flex: 1, padding: '12px', borderRadius: '10px', border: 'none', backgroundColor: role === 'volunteer' ? '#438e5e' : '#e0e0e0', color: role === 'volunteer' ? 'white' : '#555', cursor: 'pointer', fontWeight: 'bold', fontSize: '16px', transition: '0.2s' }}>volunteer</button>
+            <button type="button" onClick={() => setRole('senior')} style={{ flex: 1, padding: '12px', borderRadius: '10px', border: 'none', backgroundColor: role === 'senior' ? '#438e5e' : '#e0e0e0', color: role === 'senior' ? 'white' : '#555', cursor: 'pointer', fontWeight: 'bold', fontSize: '16px', transition: '0.2s' }}>senior</button>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <label style={{ fontWeight: 'bold', marginBottom: '8px', fontSize: '16px' }}>Email</label>
+            <input type="email" required style={{ padding: '15px', border: '1px solid #ccc', borderRadius: '8px', fontSize: '16px' }} />
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <label style={{ fontWeight: 'bold', marginBottom: '8px', fontSize: '16px' }}>Password</label>
+            <input type="password" required style={{ padding: '15px', border: '1px solid #ccc', borderRadius: '8px', fontSize: '16px' }} />
+          </div>
+
+          <button type="submit" style={{ backgroundColor: '#438e5e', color: 'white', padding: '16px', borderRadius: '8px', border: 'none', fontSize: '20px', fontWeight: 'bold', cursor: 'pointer', marginTop: '15px', transition: '0.2s' }}>log in</button>
+          
+          <div style={{ textAlign: 'center', marginTop: '15px', fontSize: '16px' }}>
+            Don't have an account? <Link to="/SignUp" style={{ color: '#0000ee', fontWeight: 'bold', textDecoration: 'none', marginLeft: '5px' }}>Sign-up</Link>
+          </div>
         </form>
       </div>
+
+      {/* --- Footer --- */}
+      <footer style={{ backgroundColor: '#2c3a4f', color: '#a0abc0', textAlign: 'center', padding: '20px 0', fontSize: '14px', lineHeight: '1.6', width: '100%' }}>
+        © 2026 Aidly All Rights Reserved.<br />
+        Developed with love by Ibrahem & Malek.
+      </footer>
     </div>
   );
 };

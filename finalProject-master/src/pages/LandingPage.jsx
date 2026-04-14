@@ -1,111 +1,79 @@
 import React from 'react';
-import { Link, useOutletContext } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import logoImg from '../images/logo.png'; 
 
 const LandingPage = () => {
-  const { lang } = useOutletContext(); 
-
-  const texts = {
-    he: {
-      title: "ברוכים הבאים למערכת Aidly",
-      subtitle: "מערכת חכמה לחיבור בין קשישים למתנדבים בקהילה.",
-      needHelp: "אני זקוק לעזרה 👴",
-      wantToVolunteer: "אני רוצה להתנדב 💚",
-      login: "כבר רשום? התחבר כאן"
-    },
-    en: {
-      title: "Welcome to Aidly",
-      subtitle: "A smart system connecting seniors with community volunteers.",
-      needHelp: "I Need Help 👴",
-      wantToVolunteer: "I Want to Volunteer 💚",
-      login: "Already registered? Login here"
-    }
+  const buttonStyle = {
+    backgroundColor: '#438e5e',
+    color: 'white',
+    border: 'none',
+    padding: '15px 40px',
+    borderRadius: '10px',
+    fontSize: '20px',
+    fontWeight: 'bold',
+    width: '350px',
+    cursor: 'pointer',
+    marginBottom: '15px',
+    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+    display: 'block',
+    textAlign: 'center',
+    textDecoration: 'none' // מבטל קו תחתי של לינקים
   };
 
-  const t = texts[lang];
-
   return (
-    <div style={{
-      /* תמונה חדשה ויפה של קהילה, עם פילטר כהה עדין כדי שהטקסט הלבן יבלוט */
-      backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?q=80&w=2070&auto=format&fit=crop")',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      minHeight: '80vh', 
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
-      textAlign: 'center',
-      borderRadius: '15px',
-      padding: '20px',
-      boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
-      marginTop: '10px'
-    }}>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', fontFamily: 'Segoe UI, sans-serif', margin: 0 }}>
       
-      {/* הטקסט עכשיו בלבן כדי לבלוט על הרקע */}
-      <h1 style={{ fontSize: '4rem', color: '#ffffff', margin: '0 0 15px 0', textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>
-        {t.title}
-      </h1>
-      
-      <p style={{ fontSize: '24px', color: '#f0f0f0', maxWidth: '600px', marginBottom: '50px', fontWeight: '500', textShadow: '1px 1px 3px rgba(0,0,0,0.5)' }}>
-        {t.subtitle}
-      </p>
-
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        gap: '20px', 
-        flexWrap: 'wrap'
-      }}>
+      {/* Content Area */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
         
-        <Link to="/senior" style={{ textDecoration: 'none' }}>
-          <div style={{
-            backgroundColor: '#e74c3c', // צבע אדום בולט לקשישים
-            color: 'white',
-            padding: '20px 40px',
-            borderRadius: '10px',
-            fontSize: '22px',
-            fontWeight: 'bold',
-            boxShadow: '0 4px 10px rgba(0,0,0,0.3)',
-            cursor: 'pointer',
-            transition: 'transform 0.2s'
-          }}>
-            {t.needHelp}
-          </div>
-        </Link>
+        {/* Logo & Title - עטפנו את הכל בלינק לדף הבית */}
+        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+          <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px' }}>
+            <h1 style={{ fontSize: '70px', color: '#1e7e48', margin: 0 }}>Aidly</h1>
+            <img src={logoImg} alt="logo" style={{ height: '70px' }} />
+          </Link>
+          <p style={{ fontSize: '20px', color: '#333', maxWidth: '400px', margin: '20px auto' }}>
+            A smart system connecting seniors with community volunteers.
+          </p>
+        </div>
 
-        <Link to="/signup" style={{ textDecoration: 'none' }}>
-          <div style={{
-            backgroundColor: '#1e7e48', // ירוק למתנדבים
-            color: 'white',
-            padding: '20px 40px',
-            borderRadius: '10px',
-            fontSize: '22px',
-            fontWeight: 'bold',
-            boxShadow: '0 4px 10px rgba(0,0,0,0.3)',
-            cursor: 'pointer',
-            transition: 'transform 0.2s'
-          }}>
-            {t.wantToVolunteer}
-          </div>
-        </Link>
+        {/* Buttons Navigation */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+          
+          <Link to="/volunteer" style={{ textDecoration: 'none' }}>
+            <button style={buttonStyle}>I want to Volunteer</button>
+          </Link>
 
+          <Link to="/senior" style={{ textDecoration: 'none' }}>
+            <button style={buttonStyle}>I need help</button>
+          </Link>
+
+          <Link to="/login" style={{ textDecoration: 'none' }}>
+            <button style={buttonStyle}>log in</button>
+          </Link>
+
+          {/* כפתור חירום/שיחה */}
+          <div style={{ 
+            backgroundColor: '#5d6d4e', 
+            color: 'white', 
+            padding: '15px', 
+            borderRadius: '10px', 
+            width: '350px', 
+            textAlign: 'center',
+            marginTop: '20px',
+            boxSizing: 'border-box'
+          }}>
+            <div style={{ fontWeight: 'bold' }}>☎️ Need Help Now? Call Us</div>
+            <div style={{ fontSize: '18px' }}>050-999-9999</div>
+          </div>
+        </div>
       </div>
 
-      <div style={{ marginTop: '50px' }}>
-        <Link to="/login" style={{ 
-          color: '#ffffff', 
-          fontSize: '18px', 
-          fontWeight: 'bold',
-          backgroundColor: 'rgba(255, 255, 255, 0.2)',
-          padding: '10px 25px',
-          borderRadius: '25px',
-          textDecoration: 'none',
-          border: '1px solid white',
-          transition: 'background-color 0.3s'
-        }}>
-          {t.login}
-        </Link>
-      </div>
+      {/* Footer - הוספנו כאן את הפוטר הכהה */}
+      <footer style={{ backgroundColor: '#2c3a4f', color: '#a0abc0', textAlign: 'center', padding: '20px 0', fontSize: '14px' }}>
+        <div>© 2026 Aidly All Rights Reserved.</div>
+        <div style={{ marginTop: '5px', fontSize: '12px' }}>Developed with love by Ibrahem & Malek.</div>
+      </footer>
       
     </div>
   );
