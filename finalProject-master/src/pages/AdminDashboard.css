@@ -293,3 +293,19 @@ td {
     width: 25px; /* Thinner bars for mobile */
   }
 }
+
+.bar-chart {
+  flex: 1;
+  display: flex;
+  
+  /* --- THE FIX IS HERE --- */
+  justify-content: center; /* Keeps bars in the middle instead of spreading them */
+  gap: 30px;               /* Sets the exact distance between each bar */
+  /* ----------------------- */
+
+  align-items: flex-end;
+  border-left: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  background-image: linear-gradient(#eee 1px, transparent 1px);
+  background-size: 100% 33.33%; 
+}
