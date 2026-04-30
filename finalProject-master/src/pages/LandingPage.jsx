@@ -17,16 +17,14 @@ const LandingPage = () => {
     boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
     display: 'block',
     textAlign: 'center',
-    textDecoration: 'none' // מבטל קו תחתי של לינקים
+    textDecoration: 'none' 
   };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', fontFamily: 'Segoe UI, sans-serif', margin: 0 }}>
       
-      {/* Content Area */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
         
-        {/* Logo & Title - עטפנו את הכל בלינק לדף הבית */}
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
           <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px' }}>
             <h1 style={{ fontSize: '70px', color: '#1e7e48', margin: 0 }}>Aidly</h1>
@@ -37,14 +35,14 @@ const LandingPage = () => {
           </p>
         </div>
 
-        {/* Buttons Navigation */}
+        {/* --- Buttons Navigation (Updated to /signup) --- */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
           
-          <Link to="/volunteer" style={{ textDecoration: 'none' }}>
+          <Link to="/signup?role=Volunteer" style={{ textDecoration: 'none' }}>
             <button style={buttonStyle}>I want to Volunteer</button>
           </Link>
 
-          <Link to="/senior" style={{ textDecoration: 'none' }}>
+          <Link to="/Login?role=Senior" style={{ textDecoration: 'none' }}>
             <button style={buttonStyle}>I need help</button>
           </Link>
 
@@ -52,7 +50,6 @@ const LandingPage = () => {
             <button style={buttonStyle}>log in</button>
           </Link>
 
-          {/* כפתור חירום/שיחה */}
           <div style={{ 
             backgroundColor: '#5d6d4e', 
             color: 'white', 
@@ -69,7 +66,6 @@ const LandingPage = () => {
         </div>
       </div>
 
-      {/* Footer - הוספנו כאן את הפוטר הכהה */}
       <footer style={{ backgroundColor: '#2c3a4f', color: '#a0abc0', textAlign: 'center', padding: '20px 0', fontSize: '14px' }}>
         <div>© 2026 Aidly All Rights Reserved.</div>
         <div style={{ marginTop: '5px', fontSize: '12px' }}>Developed with love by Ibrahem & Malek.</div>
