@@ -35,14 +35,16 @@ const LandingPage = () => {
           </p>
         </div>
 
-        {/* --- Buttons Navigation (Updated to /signup) --- */}
+        {/* --- Buttons Navigation (FIXED PATHS TO /signup) --- */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
           
+          {/* Volunteer button points to signup */}
           <Link to="/signup?role=Volunteer" style={{ textDecoration: 'none' }}>
             <button style={buttonStyle}>I want to Volunteer</button>
           </Link>
 
-          <Link to="/Login?role=Senior" style={{ textDecoration: 'none' }}>
+          {/* Senior button now correctly points to signup instead of login */}
+          <Link to="/signup?role=Senior" style={{ textDecoration: 'none' }}>
             <button style={buttonStyle}>I need help</button>
           </Link>
 

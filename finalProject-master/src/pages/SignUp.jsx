@@ -1,11 +1,21 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import logoImg from '../images/logo.png'; 
 import signupImg from '../images/signupa.png'; 
 
 const SignUp = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ fullName: '', email: '', password: '', confirm: '' });
+  const location = useLocation();
+  const [formData, setFormData] = useState({ fullName: '', email: '', password: '', confirm: '', role: 'Volunteer' });
+
+  useEffect(() => {
+    // Dynamically parse the ?role= parameter from the URL
+    const queryParams = new URLSearchParams(location.search);
+    const roleParam = queryParams.get('role');
+    if (roleParam) {
+      setFormData(prev => ({ ...prev, role: roleParam }));
+    }
+  }, [location]);
 
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -19,7 +29,7 @@ const SignUp = () => {
                 fullName: formData.fullName, 
                 email: formData.email, 
                 password: formData.password, 
-                role: 'Volunteer' // Defaulting to volunteer for this form
+                role: formData.role
             })
         });
 
@@ -38,12 +48,15 @@ const SignUp = () => {
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: '#ffffff', fontFamily: 'Segoe UI, sans-serif', margin: 0 }}>
       <header style={{ backgroundColor: '#1e7e48', padding: '15px 30px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Link to="/"><img src={logoImg} alt="Aidly" style={{ height: '50px' }} /></Link>
+        <Link to="/" style={{ color: 'white', textDecoration: 'none', fontWeight: 'bold', fontSize: '16px' }}>← Back to Home</Link>
       </header>
 
       <div style={{ flex: 1, display: 'flex', flexDirection: 'row' }}>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '40px' }}>
           <div style={{ width: '100%', maxWidth: '400px' }}>
-            <h2 style={{ color: '#000', marginBottom: '25px', fontSize: '32px', fontWeight: 'bold' }}>Create Account</h2>
+            <h2 style={{ color: '#000', marginBottom: '10px', fontSize: '32px', fontWeight: 'bold' }}>Create Account</h2>
+            <p style={{ color: '#1e7e48', fontWeight: 'bold', marginBottom: '25px' }}>Registering as: {formData.role}</p>
+            
             <form onSubmit={handleSignUp} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <label style={{ fontWeight: 'bold', marginBottom: '5px' }}>Full Name</label>

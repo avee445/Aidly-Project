@@ -9,9 +9,26 @@ const AdminDashboard = () => {
   const [adminStats, setAdminStats] = useState({ successRate: '0%', chartValues: [0, 0, 0, 0, 0] });
 
   useEffect(() => {
+    // 1. Fetch user session from memory
     const savedUser = localStorage.getItem('aidlyUser');
-    if (savedUser) setCurrentUser(JSON.parse(savedUser));
+    if (!savedUser) {
+      alert("Please log in to access this page!");
+      navigate('/login');
+      return;
+    }
 
+    const user = JSON.parse(savedUser);
+
+    // 2. SECURITY GUARD: Kick out anyone who isn't an Admin!
+    if (user.role !== 'Admin') {
+      alert("Access Denied: This area is for Admins only.");
+      navigate('/login');
+      return;
+    }
+
+    setCurrentUser(user);
+
+    // 3. Fetch database metrics only if authorized
     fetch('http://127.0.0.1:5000/api/stats')
         .then(res => res.json())
         .then(data => setStats(data))
@@ -21,7 +38,7 @@ const AdminDashboard = () => {
         .then(res => res.json())
         .then(data => setAdminStats(data))
         .catch(err => console.log(err));
-  }, []);
+  }, [navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem('aidlyUser');
@@ -101,7 +118,7 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        {/* --- 3. Weekly Activity Chart (FIXED SPACING) --- */}
+        {/* --- 3. Weekly Activity Chart --- */}
         <div style={{ marginBottom: '30px' }}>
           <h3 style={{ fontSize: '16px', color: '#333', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             📊 Weekly Activity
@@ -116,7 +133,7 @@ const AdminDashboard = () => {
               <span>0</span>
             </div>
             
-            {/* --- THIS IS THE FIXED BAR CHART CONTAINER --- */}
+            {/* --- Bar Chart Flex Wrapper --- */}
             <div style={{ display: 'flex', flex: 1, justifyContent: 'center', gap: '35px', alignItems: 'flex-end', height: '100%' }}>
               {adminStats.chartValues.map((val, i) => {
                 const maxDataPoint = Math.max(...adminStats.chartValues, 5); 

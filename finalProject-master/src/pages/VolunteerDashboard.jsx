@@ -41,15 +41,16 @@ const VolunteerDashboard = () => {
       .catch(err => console.error("Error fetching tasks:", err));
   }, [navigate]);
 
-  const handleDone = async (id) => {
-    try {
-        const res = await fetch(`http://127.0.0.1:5000/api/requests/${id}/complete`, { method: 'PUT' });
-        if (res.ok) {
-            alert("Great job! Task completed.");
-            window.location.reload(); 
-        }
-    } catch (err) { alert("Error updating task."); }
-  };
+const handleDone = async (id, seniorName) => {
+  try {
+      const res = await fetch(`http://127.0.0.1:5000/api/requests/${id}/complete`, { method: 'PUT' });
+      if (res.ok) {
+          alert("Great job! Task completed.");
+          // This line passes the data straight to your new survey page!
+          navigate(`/senior/survey?requestId=${id}&seniorName=${seniorName}`); 
+      }
+  } catch (err) { alert("Error updating task."); }
+};
 
   const handleAccept = async (id) => {
     try {
