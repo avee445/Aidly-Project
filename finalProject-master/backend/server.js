@@ -32,7 +32,7 @@ app.post('/api/login', async (req, res) => {
                 user: { 
                     fullName: user.FullName, 
                     role: user.UserRole,
-                    phone: user.Phone || '', // Added in case you have these in Users table
+                    phone: user.Phone || '', 
                     address: user.Address || '' 
                 } 
             });
@@ -65,10 +65,7 @@ app.post('/api/register', async (req, res) => {
 
 // Create Request (With ALL restored inputs)
 app.post('/api/requests', async (req, res) => {
-    // 1. Destructure the data coming from React
     const { seniorName, phone, address, taskDescription, urgency } = req.body;
-    
-    // Log it so you can see if the data actually arrived at the server!
     console.log("New Request Received:", req.body);
 
     try {
@@ -79,7 +76,6 @@ app.post('/api/requests', async (req, res) => {
             .input('addr', address)
             .input('task', taskDescription)
             .input('urgency', urgency)
-            // 2. Ensure these column names match your SQL Table EXACTLY
             .query(`
                 INSERT INTO HelpRequests (SeniorName, PhoneNumber, Address, TaskDescription, Urgency, Status) 
                 VALUES (@name, @phone, @addr, @task, @urgency, 'Waiting')
@@ -92,7 +88,7 @@ app.post('/api/requests', async (req, res) => {
     }
 });
 
-// 1. Get Pending Volunteers
+// Get Pending Volunteers
 app.get('/api/volunteers/pending', async (req, res) => {
     try {
         const pool = await poolPromise;
@@ -102,13 +98,11 @@ app.get('/api/volunteers/pending', async (req, res) => {
     } catch (err) { res.status(500).send(err.message); }
 });
 
-// 2. Approve/Reject Logic
-// --- Update ALL Volunteer Details ---
+// Update Volunteer Details
 app.put('/api/volunteers/:id/update', async (req, res) => {
-    const { fullName, email, phone, address } = req.body; // Lowercase keys from React
+    const { fullName, email, phone, address } = req.body; 
     const { id } = req.params;
-
-    console.log("Data received at backend:", req.body); // Check your terminal!
+    console.log("Data received at backend:", req.body); 
 
     try {
         const pool = await poolPromise;
@@ -132,6 +126,7 @@ app.put('/api/volunteers/:id/update', async (req, res) => {
         res.status(500).send("Database error: " + err.message);
     }
 });
+
 // Get All Requests
 app.get('/api/requests', async (req, res) => {
     try {
@@ -143,7 +138,7 @@ app.get('/api/requests', async (req, res) => {
     }
 });
 
-// Assign a Volunteer (Update Status to Assigned)
+// Assign a Volunteer
 app.put('/api/requests/:id/assign', async (req, res) => {
     const { volunteerName } = req.body;
     const { id } = req.params;
@@ -175,8 +170,7 @@ app.put('/api/requests/:id/complete', async (req, res) => {
 
 // --- 5. User/Volunteer Management ---
 
-// Get Only Volunteers for dropdowns
-// --- Get ALL Details for Volunteers ---
+// Get Only Active Volunteers
 app.get('/api/volunteers', async (req, res) => {
     try {
         const pool = await poolPromise;
@@ -187,9 +181,8 @@ app.get('/api/volunteers', async (req, res) => {
         res.status(500).send(err.message);
     }
 });
-// --- 6. Statistics & Dashboard Routes ---
 
-// Basic Counts (Waiting Seniors / Total Volunteers)
+// --- Basic Counts ---
 app.get('/api/stats', async (req, res) => {
     try {
         const pool = await poolPromise;
@@ -207,11 +200,8 @@ app.get('/api/stats', async (req, res) => {
 // --- Approve or Reject Volunteer ---
 app.put('/api/volunteers/:id/:action', async (req, res) => {
     const { id, action } = req.params;
-    
-    // Logic: If action is 'approve' -> Active. Otherwise -> Rejected.
     const newStatus = action === 'approve' ? 'Active' : 'Rejected';
-
-    console.log(`Processing ${action} for UserID: ${id}`); // Look at your terminal!
+    console.log(`Processing ${action} for UserID: ${id}`); 
 
     try {
         const pool = await poolPromise;
@@ -235,7 +225,6 @@ app.get('/api/admin-stats', async (req, res) => {
         
         const total = totalReq.recordset[0].total || 1; 
         const completed = compReq.recordset[0].comp || 0;
-        // Logic: Success Rate = (Completed / Total) * 100
         const successRate = Math.round((completed / total) * 100);
 
         const chartData = await pool.request().query(`
@@ -251,6 +240,29 @@ app.get('/api/admin-stats', async (req, res) => {
         });
     } catch (err) {
         res.status(500).send(err.message);
+    }
+});
+
+// --- 6. ADDED: Survey Feedback Submission Route ---
+app.post('/api/feedback', async (req, res) => {
+    const { requestId, volunteerName, rating, comments } = req.body;
+    console.log("Feedback data received at backend:", req.body);
+
+    try {
+        const pool = await poolPromise;
+        await pool.request()
+            .input('reqId', requestId)
+            .input('volName', volunteerName)
+            .input('rating', rating)
+            .input('comments', comments || '')
+            .query(`
+                INSERT INTO Feedback (RequestID, VolunteerName, Rating, Comments)
+                VALUES (@reqId, @volName, @rating, @comments)
+            `);
+        res.status(201).json({ message: "Feedback saved to SQL server database successfully!" });
+    } catch (err) {
+        console.error("SQL INSERT FEEDBACK ERROR:", err.message);
+        res.status(500).send("Database Error: " + err.message);
     }
 });
 
