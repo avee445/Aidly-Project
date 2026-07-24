@@ -1,113 +1,138 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2'; // NEW: Alerts
 import logoImg from '../images/logo.png'; 
 
 const VolunteerDashboard = () => {
   const navigate = useNavigate();
-  const [currentUser, setCurrentUser] = useState({ fullName: '', role: '' });
-  const [availableTasks, setAvailableTasks] = useState([]);
+  const [currentUser, setCurrentUser] = useState({ fullName: 'Volunteer', role: '' });
+  const [availableRequests, setAvailableRequests] = useState([]);
   const [myTasks, setMyTasks] = useState([]);
 
   useEffect(() => {
-    // 1. Check if a user is logged in
     const savedUser = localStorage.getItem('aidlyUser');
-    
     if (!savedUser) {
-      alert("Please log in to access the dashboard.");
-      navigate('/login');
-      return; // Stop the code here
+        navigate('/login');
+        return;
     }
-
     const user = JSON.parse(savedUser);
-
-    // 2. Security Check: Make sure they are actually a Volunteer
-    if (user.role !== 'Volunteer') {
-      alert("Access Denied: This area is for Volunteers only.");
-      navigate('/login');
-      return;
-    }
-
     setCurrentUser(user);
+    fetchData(user.fullName);
+  }, [navigate]);
 
-    // 3. Fetch data only if authenticated
+  const fetchData = (volunteerName) => {
     fetch('http://127.0.0.1:5000/api/requests')
       .then(res => res.json())
       .then(data => {
-          // Tasks no one has taken yet
-          setAvailableTasks(data.filter(t => t.Status === 'Waiting'));
-          // Tasks specifically assigned to THIS volunteer
-          setMyTasks(data.filter(t => t.AssignedVolunteer === user.fullName && t.Status === 'Assigned'));
+          setAvailableRequests(data.filter(req => req.Status === 'Waiting'));
+          setMyTasks(data.filter(req => req.AssignedVolunteer === volunteerName && req.Status === 'Assigned'));
       })
-      .catch(err => console.error("Error fetching tasks:", err));
-  }, [navigate]);
+      .catch(err => console.error(err));
+  };
 
-const handleDone = async (id, seniorName) => {
-  try {
-      const res = await fetch(`http://127.0.0.1:5000/api/requests/${id}/complete`, { method: 'PUT' });
-      if (res.ok) {
-          alert("Great job! Task completed.");
-          // This line passes the data straight to your new survey page!
-          navigate(`/senior/survey?requestId=${id}&seniorName=${seniorName}`); 
-      }
-  } catch (err) { alert("Error updating task."); }
-};
+  const assignTask = (id) => {
+    fetch(`http://127.0.0.1:5000/api/requests/${id}/assign`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ volunteerName: currentUser.fullName })
+    })
+    .then(res => res.json())
+    .then(() => fetchData(currentUser.fullName))
+    .catch(err => console.error(err));
+  };
 
-  const handleAccept = async (id) => {
-    try {
-        const res = await fetch(`http://127.0.0.1:5000/api/requests/${id}/assign`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ volunteerName: currentUser.fullName })
+  const completeTask = (id) => {
+    fetch(`http://127.0.0.1:5000/api/requests/${id}/complete`, {
+        method: 'PUT'
+    })
+    .then(res => res.json())
+    .then(() => {
+        // NEW: SweetAlert Success replaces old alert
+        Swal.fire({
+            icon: 'success',
+            title: 'Task Completed!',
+            text: 'Thank you for your help 💚',
+            confirmButtonColor: '#438e5e'
+        }).then(() => {
+            navigate(`/volunteer/survey?requestId=${id}&partnerName=Senior`);
         });
-        if (res.ok) window.location.reload();
-    } catch (err) { alert("Error accepting task."); }
+    })
+    .catch(err => console.error(err));
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('aidlyUser');
+    navigate('/login');
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', fontFamily: 'Segoe UI, sans-serif' }}>
-      <header style={{ backgroundColor: '#1e7e48', padding: '15px 30px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'white' }}>
-        <Link to="/"><img src={logoImg} alt="Aidly" style={{ height: '50px' }} /></Link>
-        <div style={{ textAlign: 'center', fontWeight: 'bold' }}>Welcome {currentUser.role}<br/>{currentUser.fullName}</div>
-        <div style={{ display: 'flex', gap: '15px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', margin: 0 }}>
+      
+      <header style={{ backgroundColor: '#1e7e48', padding: '15px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'white' }}>
+        <Link to="/"><img src={logoImg} alt="Aidly" style={{ height: '50px', cursor: 'pointer' }} /></Link>
+        <div style={{ fontWeight: 'bold', textAlign: 'center', fontSize: '18px' }}>
+          Welcome {currentUser.role}<br/>{currentUser.fullName}
+        </div>
+        <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
             <Link to="/volunteer/history" style={{ color: 'white', textDecoration: 'none', fontWeight: 'bold' }}>History</Link>
-            <Link to="/login" onClick={() => localStorage.removeItem('aidlyUser')} style={{ color: 'white', textDecoration: 'none', fontWeight: 'bold' }}>Logout</Link>
+            <button onClick={handleLogout} style={{ background: 'none', border: 'none', color: 'white', fontWeight: 'bold', fontSize: '16px', cursor: 'pointer' }}>Logout</button>
         </div>
       </header>
 
-      <div style={{ flex: 1, padding: '20px', maxWidth: '500px', margin: '0 auto', width: '100%' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-            <h2 style={{ fontSize: '22px', margin: 0 }}>Volunteer Dashboard 💚</h2>
-            <Link to="/" style={{ color: '#0000ee', textDecoration: 'none', fontWeight: 'bold' }}>← Back</Link>
+      <main style={{ flex: 1, padding: '40px 20px', maxWidth: '1100px', margin: '0 auto', width: '100%' }}>
+        
+        <h2 style={{ fontSize: '32px', fontWeight: 'bold', color: '#333', marginBottom: '40px' }}>Volunteer Dashboard 💚</h2>
+
+        <h3 style={{ fontSize: '24px', marginBottom: '20px', color: '#1e7e48' }}>My Active Tasks</h3>
+        <div style={{ backgroundColor: 'white', borderRadius: '15px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', padding: '20px', marginBottom: '50px' }}>
+            {myTasks.length > 0 ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                    {myTasks.map(req => (
+                        <div key={req.RequestID} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px', border: '1px solid #ddd', borderRadius: '10px' }}>
+                            <div>
+                                <h4 style={{ margin: '0 0 10px 0', fontSize: '18px', color: '#333' }}>{req.TaskDescription}</h4>
+                                <div style={{ color: '#666', fontSize: '14px', marginBottom: '5px' }}><strong>Senior:</strong> {req.SeniorName}</div>
+                                <div style={{ color: '#666', fontSize: '14px', marginBottom: '5px' }}><strong>Phone:</strong> {req.PhoneNumber}</div>
+                                <div style={{ color: '#666', fontSize: '14px' }}><strong>Address:</strong> {req.Address}</div>
+                                {req.SideNotes && (
+                                    <div style={{ color: '#d9534f', fontSize: '14px', marginTop: '10px', fontStyle: 'italic' }}>📝 {req.SideNotes}</div>
+                                )}
+                            </div>
+                            
+                            {/* FIXED: Button changed to high-contrast Yellow */}
+                            <button onClick={() => completeTask(req.RequestID)} style={{ backgroundColor: '#ffc107', color: '#000', border: 'none', padding: '12px 25px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+                                Mark as Complete ✅
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                <p style={{ color: '#666', fontSize: '16px', margin: 0 }}>No active tasks. Check available requests below!</p>
+            )}
         </div>
 
-        {/* --- SECTION: My Current Active Tasks --- */}
-        <h3 style={{ fontSize: '18px', color: '#1e7e48' }}>My Active Tasks</h3>
-        {myTasks.length === 0 ? <p style={{ color: '#666' }}>No active tasks. Check available requests below!</p> : null}
-        {myTasks.map(task => (
-            <div key={task.RequestID} style={{ border: '2px solid #1e7e48', borderRadius: '10px', padding: '15px', marginBottom: '15px' }}>
-                <strong>Senior: {task.SeniorName}</strong><br/>
-                Task: {task.TaskDescription}<br/>
-                <button onClick={() => handleDone(task.RequestID)} style={{ width: '100%', backgroundColor: '#438e5e', color: 'white', padding: '10px', marginTop: '10px', borderRadius: '5px', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}>
-                    Mark Task as Done ✅
-                </button>
-            </div>
-        ))}
-
-        {/* --- SECTION: Available Tasks (Accept buttons) --- */}
-        <h3 style={{ fontSize: '18px', marginTop: '30px' }}>Available Requests</h3>
-        {availableTasks.length === 0 ? <p style={{ color: '#666' }}>No requests waiting right now. Good work!</p> : null}
-        {availableTasks.map(task => (
-            <div key={task.RequestID} style={{ border: '1px solid #ddd', borderRadius: '10px', padding: '15px', marginBottom: '10px' }}>
-                <div style={{ fontSize: '14px' }}>
-                    <strong>{task.TaskDescription}</strong><br/>
-                    Senior: {task.SeniorName} | Phone: {task.PhoneNumber}
+        <h3 style={{ fontSize: '24px', marginBottom: '20px', color: '#1e7e48' }}>Available Requests</h3>
+        <div style={{ backgroundColor: 'white', borderRadius: '15px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', padding: '20px' }}>
+            {availableRequests.length > 0 ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                    {availableRequests.map(req => (
+                        <div key={req.RequestID} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px', border: '1px solid #ddd', borderRadius: '10px' }}>
+                            <div>
+                                <h4 style={{ margin: '0 0 10px 0', fontSize: '18px', color: '#333' }}>{req.TaskDescription}</h4>
+                                <div style={{ color: '#666', fontSize: '14px', marginBottom: '5px' }}><strong>Urgency:</strong> {req.Urgency}</div>
+                                <div style={{ color: '#666', fontSize: '14px' }}><strong>Address:</strong> {req.Address}</div>
+                            </div>
+                            <button onClick={() => assignTask(req.RequestID)} style={{ backgroundColor: '#438e5e', color: 'white', border: 'none', padding: '12px 25px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
+                                Accept Task
+                            </button>
+                        </div>
+                    ))}
                 </div>
-                <button onClick={() => handleAccept(task.RequestID)} style={{ backgroundColor: '#1e7e48', color: 'white', border: 'none', padding: '8px', borderRadius: '5px', marginTop: '10px', cursor: 'pointer', width: '100%' }}>
-                    Accept Task
-                </button>
-            </div>
-        ))}
-      </div>
+            ) : (
+                <p style={{ color: '#666', fontSize: '16px', margin: 0 }}>No requests waiting right now. Good work!</p>
+            )}
+        </div>
+      </main>
     </div>
   );
 };

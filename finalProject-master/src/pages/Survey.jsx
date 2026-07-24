@@ -6,14 +6,13 @@ const Survey = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
-  const [currentUser, setCurrentUser] = useState({ fullName: 'Volunteer' });
+  const [currentUser, setCurrentUser] = useState({ fullName: '', role: 'User' });
   const [rating, setRating] = useState(5);
   const [comments, setComments] = useState('');
   
-  // Extract Request ID and Senior Name passed from previous complete click action context
   const queryParams = new URLSearchParams(location.search);
   const requestId = queryParams.get('requestId') || '0';
-  const seniorName = queryParams.get('seniorName') || 'the Senior';
+  const partnerName = queryParams.get('partnerName') || 'the other participant';
 
   useEffect(() => {
     const savedUser = localStorage.getItem('aidlyUser');
@@ -27,17 +26,19 @@ const Survey = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           requestId: requestId,
-          volunteerName: currentUser.fullName,
+          reviewerName: currentUser.fullName,
           rating: rating,
-          comments: comments
+          comments: comments,
+          role: currentUser.role // Sends 'Volunteer' or 'Senior' identification stamp
         })
       });
 
       if (response.ok) {
-        alert("Thank you! Feedback submitted successfully. 💚");
-        navigate('/volunteer');
+        alert("Thank you! Feedback saved successfully. 💚");
+        // Redirect back to correct dashboard
+        navigate(currentUser.role === 'Volunteer' ? '/volunteer' : '/senior');
       } else {
-        alert("Error saving your review.");
+        alert("Error saving review.");
       }
     } catch (err) {
       console.error(err);
@@ -50,14 +51,19 @@ const Survey = () => {
       <header style={{ backgroundColor: '#1e7e48', padding: '15px 30px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'white' }}>
         <img src={logoImg} alt="Aidly" style={{ height: '50px' }} />
         <div style={{ fontWeight: 'bold', textAlign: 'center' }}>Welcome {currentUser.fullName}</div>
-        <button onClick={() => navigate('/volunteer')} style={{ background: 'none', border: 'none', color: 'white', fontWeight: 'bold', cursor: 'pointer', fontSize: '15px' }}>← Back to Dashboard</button>
+        <button 
+          onClick={() => navigate(currentUser.role === 'Volunteer' ? '/volunteer' : '/senior')} 
+          style={{ background: 'none', border: 'none', color: 'white', fontWeight: 'bold', cursor: 'pointer', fontSize: '15px' }}
+        >
+          ← Back
+        </button>
       </header>
 
       <div style={{ padding: '40px 20px', flex: 1, textAlign: 'center' }}>
         <h1 style={{ color: '#438e5e', fontSize: '40px', margin: '0' }}>Congrats!🎉</h1>
-        <p style={{ fontSize: '20px', margin: '20px 0' }}>How was your experience<br/>helping {seniorName}?</p>
+        <p style={{ fontSize: '20px', margin: '20px 0' }}>How was your experience<br/>interacting with {partnerName}?</p>
 
-        {/* Dynamic Interactive Clickable Star System */}
+        {/* Dynamic Star Rating Selector */}
         <div style={{ fontSize: '40px', marginBottom: '30px', cursor: 'pointer' }}>
           {[1, 2, 3, 4, 5].map((star) => (
             <span 
@@ -79,9 +85,12 @@ const Survey = () => {
 
         <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
           <button onClick={handleSubmit} style={{ backgroundColor: '#1e7e48', color: 'white', border: 'none', padding: '15px 25px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
-            ✅ Submit Survey
+            ✅ Submit Review
           </button>
-          <button onClick={() => navigate('/volunteer')} style={{ backgroundColor: '#ff0000', color: 'white', border: 'none', padding: '15px 25px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
+          <button 
+            onClick={() => navigate(currentUser.role === 'Volunteer' ? '/volunteer' : '/senior')} 
+            style={{ backgroundColor: '#ff0000', color: 'white', border: 'none', padding: '15px 25px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}
+          >
             Cancel
           </button>
         </div>

@@ -1,3 +1,9 @@
+body {
+  background-color: #f4f7f6 !important;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 .split-screen-container {
   display: flex;
   height: 100vh;

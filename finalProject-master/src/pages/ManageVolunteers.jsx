@@ -1,112 +1,167 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import logoImg from '../images/logo.png'; 
+import { Link, useNavigate } from 'react-router-dom';
+import logoImg from '../images/logo.png';
 
 const ManageVolunteers = () => {
-    const [volunteers, setVolunteers] = useState([]);
-    const [editingId, setEditingId] = useState(null);
-    const [editData, setEditData] = useState({ fullName: '', email: '', phone: '', address: '' });
+    const navigate = useNavigate();
+    const [users, setUsers] = useState([]);
+    const [editingUser, setEditingUser] = useState(null);
+    const [editForm, setEditForm] = useState({ fullName: '', email: '', phone: '', address: '' });
+    
+    // NEW: State to track which filter is active ('All', 'Senior', or 'Volunteer')
+    const [filter, setFilter] = useState('All'); 
 
     useEffect(() => {
-        fetch('http://127.0.0.1:5000/api/volunteers')
-            .then(res => res.json())
-            .then(setVolunteers);
-    }, []);
-
- const startEdit = (vol) => {
-    console.log("Loading volunteer into edit mode:", vol);
-    
-    setEditingId(vol.UserID);
-    
-    // We map the SQL Capitalized keys to our lowercase state keys
-    setEditData({ 
-        fullName: vol.FullName || '', 
-        email: vol.Email || '', 
-        phone: vol.Phone || '', 
-        address: vol.Address || '' 
-    });
-};
-
-    const handleUpdate = async (id) => {
-    // 1. Phone Validation: Numbers only, at least 9-10 digits
-    const phoneRegex = /^[0-9]+$/;
-    if (!phoneRegex.test(editData.phone)) {
-        return alert("Phone number must contain only numbers!");
-    }
-
-    // 2. Email Validation: Basic email format check
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(editData.email)) {
-        return alert("Please enter a valid email address!");
-    }
-
-    try {
-        const res = await fetch(`http://127.0.0.1:5000/api/volunteers/${id}/update`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(editData)
-        });
-
-        if (res.ok) {
-            alert("Updated successfully! ✅");
-            setEditingId(null);
-            window.location.reload();
+        const savedUser = localStorage.getItem('aidlyUser');
+        if (!savedUser || JSON.parse(savedUser).role !== 'Admin') {
+            navigate('/login');
+            return;
         }
-    } catch (err) {
-        alert("Update failed.");
-    }
-};
+        fetchActiveUsers();
+    }, [navigate]);
+
+    const fetchActiveUsers = async () => {
+        try {
+            const res = await fetch('http://127.0.0.1:5000/api/users/active');
+            const data = await res.json();
+            setUsers(data);
+        } catch (err) {
+            console.error("Error fetching users:", err);
+        }
+    };
+
+    const handleEditClick = (user) => {
+        setEditingUser(user.UserID);
+        setEditForm({ 
+            fullName: user.FullName, 
+            email: user.Email, 
+            phone: user.Phone || '', 
+            address: user.Address || '' 
+        });
+    };
+
+    const handleSave = async (id) => {
+        try {
+            const res = await fetch(`http://127.0.0.1:5000/api/users/${id}/update`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(editForm)
+            });
+            if (res.ok) {
+                alert("User updated successfully! ✅");
+                setEditingUser(null);
+                fetchActiveUsers(); // Refresh the list
+            }
+        } catch (err) {
+            console.error("Error updating user:", err);
+        }
+    };
+
+    // NEW: Dynamically filter the users list based on the active button
+    const filteredUsers = users.filter(user => {
+        if (filter === 'All') return true;
+        return user.UserRole === filter;
+    });
+
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', fontFamily: 'Segoe UI, sans-serif' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: '#f4f7f6', fontFamily: 'Segoe UI, sans-serif' }}>
             <header style={{ backgroundColor: '#1e7e48', padding: '15px 30px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Link to="/"><img src={logoImg} alt="Aidly" style={{ height: '50px' }} /></Link>
-                <Link to="/admin" style={{ color: 'white', textDecoration: 'none', fontWeight: 'bold' }}>Back</Link>
+                <Link to="/"><img src={logoImg} alt="Aidly" style={{ height: '70px' }} /></Link>
+                <div style={{ color: 'white', fontWeight: 'bold', fontSize: '18px' }}>Manage Users</div>
+                <Link to="/admin" style={{ color: 'white', textDecoration: 'none', fontWeight: 'bold' }}>← Back</Link>
             </header>
 
-            <div style={{ padding: '30px', maxWidth: '1000px', margin: '0 auto', width: '100%' }}>
-                <h2 style={{ fontSize: '24px', marginBottom: '20px', fontWeight: 'bold' }}>👥 Manage Active Volunteers</h2>
-                <div style={{ backgroundColor: '#fff', borderRadius: '10px', border: '1px solid #eee', overflowX: 'auto' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                        <thead>
-                            <tr style={{ backgroundColor: '#f8f9fa', borderBottom: '2px solid #ddd' }}>
-                                <th style={{ padding: '15px', textAlign: 'left' }}>Full Name</th>
-                                <th style={{ padding: '15px', textAlign: 'left' }}>Email</th>
-                                <th style={{ padding: '15px', textAlign: 'left' }}>Phone</th>
-                                <th style={{ padding: '15px', textAlign: 'left' }}>Address</th>
-                                <th style={{ padding: '15px', textAlign: 'center' }}>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {volunteers.map((vol) => (
-                                <tr key={vol.UserID} style={{ borderBottom: '1px solid #eee' }}>
-                                    {editingId === vol.UserID ? (
-                                        <>
-                                            <td style={{ padding: '10px' }}><input style={{ width: '90%' }} value={editData.fullName} onChange={(e) => setEditData({...editData, fullName: e.target.value})} /></td>
-                                            <td style={{ padding: '10px' }}><input style={{ width: '90%' }} value={editData.email} onChange={(e) => setEditData({...editData, email: e.target.value})} /></td>
-                                            <td style={{ padding: '10px' }}><input style={{ width: '90%' }} value={editData.phone} onChange={(e) => setEditData({...editData, phone: e.target.value})} /></td>
-                                            <td style={{ padding: '10px' }}><input style={{ width: '90%' }} value={editData.address} onChange={(e) => setEditData({...editData, address: e.target.value})} /></td>
-                                            <td style={{ padding: '10px', textAlign: 'center' }}>
-                                                <button onClick={() => handleUpdate(vol.UserID)} style={{ backgroundColor: '#438e5e', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer', marginRight: '5px' }}>Save</button>
-                                                <button onClick={() => setEditingId(null)} style={{ backgroundColor: '#666', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer' }}>X</button>
-                                            </td>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <td style={{ padding: '15px' }}>{vol.FullName}</td>
-                                            <td style={{ padding: '15px' }}>{vol.Email}</td>
-                                            <td style={{ padding: '15px' }}>{vol.Phone || '---'}</td>
-                                            <td style={{ padding: '15px' }}>{vol.Address || '---'}</td>
-                                            <td style={{ padding: '15px', textAlign: 'center' }}>
-                                                <button onClick={() => startEdit(vol)} style={{ backgroundColor: '#0000cc', color: 'white', border: 'none', padding: '6px 15px', borderRadius: '20px', cursor: 'pointer', fontWeight: 'bold' }}>Edit Profile</button>
-                                            </td>
-                                        </>
-                                    )}
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+            <main style={{ flex: 1, padding: '40px 20px', maxWidth: '900px', margin: '0 auto', width: '100%' }}>
+                <h2 style={{ fontSize: '28px', color: '#333', marginBottom: '20px' }}>Active System Users</h2>
+                
+                {/* --- NEW: Filter Buttons --- */}
+                <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+                    <button 
+                        onClick={() => setFilter('All')}
+                        style={{ 
+                            padding: '10px 20px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', border: '2px solid #1e7e48', transition: '0.2s',
+                            backgroundColor: filter === 'All' ? '#1e7e48' : 'white',
+                            color: filter === 'All' ? 'white' : '#1e7e48'
+                        }}
+                    >
+                        Show All
+                    </button>
+                    <button 
+                        onClick={() => setFilter('Senior')}
+                        style={{ 
+                            padding: '10px 20px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', border: '2px solid #0d47a1', transition: '0.2s',
+                            backgroundColor: filter === 'Senior' ? '#0d47a1' : 'white',
+                            color: filter === 'Senior' ? 'white' : '#0d47a1'
+                        }}
+                    >
+                        Seniors Only
+                    </button>
+                    <button 
+                        onClick={() => setFilter('Volunteer')}
+                        style={{ 
+                            padding: '10px 20px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', border: '2px solid #1e7e48', transition: '0.2s',
+                            backgroundColor: filter === 'Volunteer' ? '#1e7e48' : 'white',
+                            color: filter === 'Volunteer' ? 'white' : '#1e7e48'
+                        }}
+                    >
+                        Volunteers Only
+                    </button>
                 </div>
-            </div>
+
+                <div style={{ backgroundColor: 'white', borderRadius: '15px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', padding: '20px' }}>
+                    {filteredUsers.length > 0 ? (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                            {/* We map over filteredUsers instead of the main users array */}
+                            {filteredUsers.map(user => (
+                                <div key={user.UserID} style={{ display: 'flex', flexDirection: 'column', padding: '20px', border: '1px solid #ddd', borderRadius: '10px' }}>
+                                    
+                                    {editingUser !== user.UserID ? (
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <div>
+                                                <h4 style={{ margin: '0 0 5px 0', fontSize: '18px', color: '#333' }}>
+                                                    {user.FullName} 
+                                                    <span style={{ 
+                                                        marginLeft: '10px', padding: '3px 8px', borderRadius: '5px', fontSize: '12px', fontWeight: 'bold',
+                                                        backgroundColor: user.UserRole === 'Senior' ? '#e3f2fd' : '#f0fff4',
+                                                        color: user.UserRole === 'Senior' ? '#0d47a1' : '#1e7e48'
+                                                    }}>
+                                                        {user.UserRole}
+                                                    </span>
+                                                </h4>
+                                                <div style={{ color: '#666', fontSize: '14px', marginBottom: '3px' }}><strong>Email:</strong> {user.Email}</div>
+                                                <div style={{ color: '#666', fontSize: '14px', marginBottom: '3px' }}><strong>Phone:</strong> {user.Phone || 'N/A'}</div>
+                                                <div style={{ color: '#666', fontSize: '14px' }}><strong>Address:</strong> {user.Address || 'N/A'}</div>
+                                            </div>
+                                            <button onClick={() => handleEditClick(user)} style={{ backgroundColor: '#f0ad4e', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
+                                                ✏️ Edit
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                            <h4 style={{ margin: '0 0 10px 0', color: '#1e7e48' }}>Editing {user.UserRole}: {user.FullName}</h4>
+                                            <input type="text" value={editForm.fullName} onChange={(e) => setEditForm({...editForm, fullName: e.target.value})} placeholder="Full Name" style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
+                                            <input type="email" value={editForm.email} onChange={(e) => setEditForm({...editForm, email: e.target.value})} placeholder="Email" style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
+                                            <input type="text" value={editForm.phone} onChange={(e) => setEditForm({...editForm, phone: e.target.value})} placeholder="Phone Number" style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
+                                            <input type="text" value={editForm.address} onChange={(e) => setEditForm({...editForm, address: e.target.value})} placeholder="Home Address" style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
+                                            
+                                            <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                                                <button onClick={() => handleSave(user.UserID)} style={{ backgroundColor: '#1e7e48', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
+                                                    Save Changes
+                                                </button>
+                                                <button onClick={() => setEditingUser(null)} style={{ backgroundColor: '#ccc', color: '#333', border: 'none', padding: '10px 20px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p style={{ color: '#666', fontSize: '16px', textAlign: 'center' }}>No active users found for this category.</p>
+                    )}
+                </div>
+            </main>
         </div>
     );
 };

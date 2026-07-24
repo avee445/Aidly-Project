@@ -5,21 +5,17 @@ import logoImg from '../images/logo.png';
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState({ fullName: 'Admin', role: '' });
-  const [stats, setStats] = useState({ seniorsWaiting: 0, newVolunteers: 0 });
-  const [adminStats, setAdminStats] = useState({ successRate: '0%', chartValues: [0, 0, 0, 0, 0] });
+  const [stats, setStats] = useState({ pending: 0, ongoing: 0, completed: 0, volunteers: 0 });
+  const [adminStats, setAdminStats] = useState({ chartValues: [0, 0, 0, 0, 0] });
 
   useEffect(() => {
-    // 1. Fetch user session from memory
     const savedUser = localStorage.getItem('aidlyUser');
     if (!savedUser) {
-      alert("Please log in to access this page!");
       navigate('/login');
       return;
     }
 
     const user = JSON.parse(savedUser);
-
-    // 2. SECURITY GUARD: Kick out anyone who isn't an Admin!
     if (user.role !== 'Admin') {
       alert("Access Denied: This area is for Admins only.");
       navigate('/login');
@@ -28,7 +24,6 @@ const AdminDashboard = () => {
 
     setCurrentUser(user);
 
-    // 3. Fetch database metrics only if authorized
     fetch('http://127.0.0.1:5000/api/stats')
         .then(res => res.json())
         .then(data => setStats(data))
@@ -46,121 +41,95 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: '#ffffff', fontFamily: 'Segoe UI, Tahoma, Geneva, Verdana, sans-serif', margin: 0 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', margin: 0 }}>
       
-      {/* --- Header --- */}
+      {/* --- Main Header --- */}
       <header style={{ backgroundColor: '#1e7e48', padding: '15px 30px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Link to="/">
-          <img src={logoImg} alt="Aidly" style={{ height: '50px', cursor: 'pointer' }} />
+          <img src={logoImg} alt="Aidly" style={{ height: '70px', cursor: 'pointer' }} />
         </Link>
-        
         <div style={{ color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: '15px', lineHeight: '1.2' }}>
           Welcome {currentUser.role}<br/>{currentUser.fullName}
         </div>
-        <Link to="/login" onClick={handleLogout} style={{ color: 'white', textDecoration: 'none', fontSize: '15px', fontWeight: 'bold' }}>
+        <button onClick={handleLogout} style={{ background: 'none', border: 'none', color: 'white', fontSize: '15px', fontWeight: 'bold', cursor: 'pointer' }}>
           Logout
-        </Link>
+        </button>
       </header>
 
-      {/* --- Main Content --- */}
-      <div style={{ flex: 1, padding: '30px 20px', maxWidth: '800px', margin: '0 auto', width: '100%' }}>
-        
-        <h2 style={{ fontSize: '28px', color: '#000', marginBottom: '25px', fontWeight: 'bold' }}>Admin Dashboard</h2>
+      {/* --- NEW: Sleek Navigation Bar --- */}
+      <nav style={{ backgroundColor: '#2c3a4f', padding: '12px 30px', display: 'flex', gap: '30px', justifyContent: 'center', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
+        <Link to="/admin" style={{ color: '#aedec5', textDecoration: 'none', fontWeight: 'bold', fontSize: '15px' }}>📊 Dashboard</Link>
+        <Link to="/admin/requests" style={{ color: 'white', textDecoration: 'none', fontSize: '15px', transition: 'color 0.2s' }}>📋 Request Queue</Link>
+        <Link to="/admin/volunteers" style={{ color: 'white', textDecoration: 'none', fontSize: '15px' }}>👥 Pending Approvals</Link>
+        <Link to="/new-request" style={{ color: 'white', textDecoration: 'none', fontSize: '15px' }}>📞 Record Request</Link>
+        <Link to="/admin/manage-volunteers" style={{ color: 'white', textDecoration: 'none', fontSize: '15px' }}>⚙️ Manage Users</Link>
+      </nav>
 
-        {/* --- 1. Statistics (Dynamic) --- */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '15px', marginBottom: '35px' }}>
-          <div style={{ border: '2px solid #1e7e48', borderRadius: '10px', padding: '15px', textAlign: 'center', backgroundColor: '#ffffff' }}>
-            <span style={{ display: 'block', fontSize: '24px', fontWeight: 'bold', color: '#1e7e48' }}>{stats.seniorsWaiting}</span>
-            <span style={{ fontSize: '16px', color: '#1e7e48', fontWeight: 'bold' }}>Seniors Waiting</span>
+      {/* --- Main Analytics Content --- */}
+      <div style={{ flex: 1, padding: '40px 20px', maxWidth: '1000px', margin: '0 auto', width: '100%' }}>
+        
+        <h2 style={{ fontSize: '28px', color: '#000', marginBottom: '25px', fontWeight: 'bold' }}>System Overview</h2>
+
+        {/* 4-Column Statistics Grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '15px', marginBottom: '40px' }}>
+          <div style={{ border: '2px solid #d9534f', borderRadius: '10px', padding: '15px', textAlign: 'center', backgroundColor: '#fffcfc' }}>
+            <span style={{ display: 'block', fontSize: '24px', fontWeight: 'bold', color: '#d9534f' }}>{stats.pending}</span>
+            <span style={{ fontSize: '14px', color: '#d9534f', fontWeight: 'bold' }}>Pending Requests</span>
           </div>
-          <div style={{ border: '2px solid #1e7e48', borderRadius: '10px', padding: '15px', textAlign: 'center', backgroundColor: '#ffffff' }}>
-            <span style={{ display: 'block', fontSize: '24px', fontWeight: 'bold', color: '#1e7e48' }}>{stats.newVolunteers}</span>
-            <span style={{ fontSize: '16px', color: '#1e7e48', fontWeight: 'bold' }}>New Volunteers</span>
+          <div style={{ border: '2px solid #f0ad4e', borderRadius: '10px', padding: '15px', textAlign: 'center', backgroundColor: '#fffdf9' }}>
+            <span style={{ display: 'block', fontSize: '24px', fontWeight: 'bold', color: '#f0ad4e' }}>{stats.ongoing}</span>
+            <span style={{ fontSize: '14px', color: '#f0ad4e', fontWeight: 'bold' }}>Ongoing Requests</span>
+          </div>
+          <div style={{ border: '2px solid #1e7e48', borderRadius: '10px', padding: '15px', textAlign: 'center', backgroundColor: '#f4fff8' }}>
+            <span style={{ display: 'block', fontSize: '24px', fontWeight: 'bold', color: '#1e7e48' }}>{stats.completed}</span>
+            <span style={{ fontSize: '14px', color: '#1e7e48', fontWeight: 'bold' }}>Requests Completed</span>
           </div>
           <div style={{ border: '2px solid #333', borderRadius: '10px', padding: '15px', textAlign: 'center', backgroundColor: '#ffffff' }}>
-            <span style={{ display: 'block', fontSize: '24px', fontWeight: 'bold', color: '#333' }}>{adminStats.successRate}</span>
-            <span style={{ fontSize: '16px', color: '#333', fontWeight: 'bold' }}>Success Rate</span>
+            <span style={{ display: 'block', fontSize: '24px', fontWeight: 'bold', color: '#333' }}>{stats.volunteers}</span>
+            <span style={{ fontSize: '14px', color: '#333', fontWeight: 'bold' }}>Total Volunteers</span>
           </div>
         </div>
 
-        {/* --- 2. Navigation Cards --- */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '40px' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', border: '1px solid #eee', borderRadius: '10px', padding: '20px', textAlign: 'center', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' }}>
-            <div>
-              <h3 style={{ margin: '0 0 8px 0', fontSize: '18px', color: '#333' }}>📋 Request Queue</h3>
-              <p style={{ margin: '0 0 15px 0', color: '#666', fontSize: '14px' }}>View and manage open tasks from seniors.</p>
-            </div>
-            <Link to="/admin/requests" style={{ display: 'block', backgroundColor: '#438e5e', color: 'white', padding: '12px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold', fontSize: '16px' }}>Manage Requests</Link>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', border: '1px solid #eee', borderRadius: '10px', padding: '20px', textAlign: 'center', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' }}>
-            <div>
-              <h3 style={{ margin: '0 0 8px 0', fontSize: '18px', color: '#333' }}>👥 Pending Volunteers</h3>
-              <p style={{ margin: '0 0 15px 0', color: '#666', fontSize: '14px' }}>Approve new users waiting to join.</p>
-            </div>
-            <Link to="/admin/volunteers" style={{ display: 'block', backgroundColor: '#438e5e', color: 'white', padding: '12px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold', fontSize: '16px' }}>View Approvals</Link>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', border: '1px solid #eee', borderRadius: '10px', padding: '20px', textAlign: 'center', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' }}>
-            <div>
-              <h3 style={{ margin: '0 0 8px 0', fontSize: '18px', color: '#333' }}>📞 New Call</h3>
-              <p style={{ margin: '0 0 15px 0', color: '#666', fontSize: '14px' }}>Manually record a request for a senior.</p>
-            </div>
-            <Link to="/new-request" style={{ display: 'block', backgroundColor: '#438e5e', color: 'white', padding: '12px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold', fontSize: '16px' }}>+ Record Request</Link>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', border: '1px solid #eee', borderRadius: '10px', padding: '20px', textAlign: 'center', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' }}>
-            <div>
-              <h3 style={{ margin: '0 0 8px 0', fontSize: '18px', color: '#333' }}>👥 Manage Volunteers</h3>
-              <p style={{ margin: '0 0 15px 0', color: '#666', fontSize: '14px' }}>Edit statuses and manage active volunteers.</p>
-            </div>
-            <Link to="/admin/manage-volunteers" style={{ display: 'block', backgroundColor: '#438e5e', color: 'white', padding: '12px', borderRadius: '8px', textDecoration: 'none', fontWeight: 'bold', fontSize: '16px' }}>Edit Volunteers</Link>
-          </div>
-        </div>
-
-        {/* --- 3. Weekly Activity Chart --- */}
-        <div style={{ marginBottom: '30px' }}>
-          <h3 style={{ fontSize: '16px', color: '#333', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        {/* --- FIXED: Weekly Activity Chart (Labels Under Line) --- */}
+        <div style={{ backgroundColor: 'white', padding: '25px', borderRadius: '15px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+          <h3 style={{ fontSize: '16px', color: '#333', margin: '0 0 20px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
             📊 Weekly Activity
           </h3>
           
-          <div style={{ display: 'flex', height: '200px', alignItems: 'flex-end', borderBottom: '1px solid #ddd', paddingBottom: '5px' }}>
-            
-            {/* Dynamic Y-Axis Labels */}
-            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%', color: '#888', fontSize: '12px', paddingRight: '15px', borderRight: '1px solid #ddd', textAlign: 'right' }}>
+          {/* Top: Bars and Bottom Border */}
+          <div style={{ display: 'flex', height: '180px', alignItems: 'flex-end', borderBottom: '2px solid #ccc' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%', color: '#888', fontSize: '12px', paddingRight: '15px', borderRight: '1px solid #ccc', textAlign: 'right' }}>
               <span>{Math.max(...adminStats.chartValues, 5)}</span>
               <span>{Math.round(Math.max(...adminStats.chartValues, 5) / 2)}</span>
               <span>0</span>
             </div>
             
-            {/* --- Bar Chart Flex Wrapper --- */}
-            <div style={{ display: 'flex', flex: 1, justifyContent: 'center', gap: '35px', alignItems: 'flex-end', height: '100%' }}>
+            <div style={{ display: 'flex', flex: 1, justifyContent: 'space-around', alignItems: 'flex-end', height: '100%' }}>
               {adminStats.chartValues.map((val, i) => {
                 const maxDataPoint = Math.max(...adminStats.chartValues, 5); 
                 const barHeight = (val / maxDataPoint) * 100;
-
                 return (
                   <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'flex-end', width: '40px' }}>
                     <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#1e7e48', marginBottom: '5px' }}>{val}</span>
-                    <div style={{ 
-                        width: '100%', 
-                        height: `${barHeight}%`, 
-                        backgroundColor: '#aedec5', 
-                        borderRadius: '4px 4px 0 0',
-                        transition: 'height 0.5s ease' 
-                    }}></div>
-                    <span style={{ fontSize: '11px', color: '#666', marginTop: '8px', fontWeight: 'bold' }}>Day {i + 1}</span>
+                    <div style={{ width: '100%', height: `${barHeight}%`, backgroundColor: '#aedec5', borderRadius: '4px 4px 0 0' }}></div>
                   </div>
                 );
               })}
             </div>
           </div>
+
+          {/* Bottom: Text Labels strictly below the line */}
+          <div style={{ display: 'flex', marginLeft: '45px', paddingTop: '10px' }}>
+            <div style={{ display: 'flex', flex: 1, justifyContent: 'space-around' }}>
+              {adminStats.chartValues.map((_, i) => (
+                <span key={i} style={{ fontSize: '12px', color: '#666', fontWeight: 'bold', width: '40px', textAlign: 'center' }}>
+                  Day {i + 1}
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
-
-      <footer style={{ backgroundColor: '#2c3a4f', color: '#a0abc0', textAlign: 'center', padding: '20px 0', fontSize: '14px' }}>
-        © 2026 Aidly All Rights Reserved.<br />Developed with love by Ibrahem & Malek.
-      </footer>
     </div>
   );
 };

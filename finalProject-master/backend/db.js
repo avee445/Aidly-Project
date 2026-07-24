@@ -1,29 +1,24 @@
-import sql from 'mssql';
+const sql = require('mssql');
 
-const dbConfig = {
-    user: 'sa',
-    password: 'Madrid123',
-    server: '127.0.0.1', 
-    // If you see \SQLEXPRESS in SSMS, use this line:
-    instanceName: 'SQLEXPRESS', 
-    database: 'AidlyDB',
+const config = {
+    user: 'db_acc6c0_aidly_admin', 
+    password: 'Madrid123', 
+    server: 'sql5063.site4now.net', 
+    database: 'db_acc6c0_aidly',
     options: {
-        encrypt: true,
-        trustServerCertificate: true
-    },
-    // Sometimes removing the port helps when using instanceName
+        encrypt: false, 
+        trustServerCertificate: true 
+    }
 };
 
-const poolPromise = new sql.ConnectionPool(dbConfig)
+const poolPromise = new sql.ConnectionPool(config)
     .connect()
     .then(pool => {
-        console.log('✅ Connected to SQL Server: AidlyDB');
+        console.log('Connected to SQL Server (Cloud): AidlyDB ✅');
         return pool;
     })
-    .catch(err => {
-        console.error('❌ Database Connection Failed: ', err);
-    });
+    .catch(err => console.log('Database Connection Failed! Bad Config: ', err));
 
-export {
+module.exports = {
     sql, poolPromise
 };

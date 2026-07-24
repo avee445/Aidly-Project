@@ -43,7 +43,7 @@ const Login = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: '#ffffff', fontFamily: 'Segoe UI, sans-serif' }}>
       <header style={{ backgroundColor: '#1e7e48', padding: '15px 30px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Link to="/"><img src={logoImg} alt="Aidly" style={{ height: '50px' }} /></Link>
+        <Link to="/"><img src={logoImg} alt="Aidly" style={{ height: '70px' }} /></Link>
       </header>
 
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '40px 20px' }}>

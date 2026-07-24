@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import logoImg from '../images/logo.png'; 
+import logoI from '../images/land.png'; 
 
 const LandingPage = () => {
   const buttonStyle = {
@@ -27,8 +27,7 @@ const LandingPage = () => {
         
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
           <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px' }}>
-            <h1 style={{ fontSize: '70px', color: '#1e7e48', margin: 0 }}>Aidly</h1>
-            <img src={logoImg} alt="logo" style={{ height: '70px' }} />
+            <img src={logoI} alt="logo" style={{ height: '155px' }} />
           </Link>
           <p style={{ fontSize: '20px', color: '#333', maxWidth: '400px', margin: '20px auto' }}>
             A smart system connecting seniors with community volunteers.

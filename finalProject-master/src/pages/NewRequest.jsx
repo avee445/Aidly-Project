@@ -6,7 +6,7 @@ const NewRequest = () => {
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState({ fullName: '', role: '' });
   const [formData, setFormData] = useState({
-    seniorName: '', phone: '', address: '', taskDescription: '', urgency: '', customTask: ''
+    seniorName: '', phone: '', address: '', taskDescription: '', urgency: '', customTask: '', sideNotes: ''
   });
 
   useEffect(() => {
@@ -14,22 +14,25 @@ const NewRequest = () => {
     if (savedUser) {
         const user = JSON.parse(savedUser);
         setCurrentUser(user);
-        if (user.role === 'Senior') {
-            setFormData(prev => ({ ...prev, seniorName: user.fullName }));
-        }
+        
+        // Auto-fill senior phone and address from signup database record
+        setFormData(prev => ({ 
+          ...prev, 
+          seniorName: user.fullName || '',
+          phone: user.phone || '',
+          address: user.address || ''
+        }));
     }
   }, []);
 
   const handleSave = async (e) => {
     e.preventDefault();
 
-    // 1. Phone Check
     const phoneRegex = /^[0-9]+$/;
     if (!phoneRegex.test(formData.phone)) {
         return alert("Error: The phone number should only contain digits.");
     }
 
-    // 2. Task Logic
     const finalTaskDescription = formData.taskDescription === 'Other' 
         ? formData.customTask 
         : formData.taskDescription;
@@ -45,17 +48,18 @@ const NewRequest = () => {
         });
 
         if (response.ok) {
-            alert("Request sent! 🚀");
+            alert("Request sent successfully! 🚀");
             navigate(currentUser.role === 'Admin' ? '/admin' : '/senior');
         }
     } catch (error) {
         console.error(error);
     }
-};
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', fontFamily: 'Segoe UI, sans-serif' }}>
       <header style={{ backgroundColor: '#1e7e48', padding: '15px 30px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'white' }}>
-        <Link to="/"><img src={logoImg} alt="Aidly" style={{ height: '50px' }} /></Link>
+        <Link to="/"><img src={logoImg} alt="Aidly" style={{ height: '70px' }} /></Link>
         <div style={{ fontWeight: 'bold' }}>Welcome {currentUser.role}<br/>{currentUser.fullName}</div>
         <Link to={currentUser.role === 'Admin' ? "/admin" : "/senior"} style={{ color: 'white', textDecoration: 'none', fontWeight: 'bold' }}>← Back</Link>
       </header>
@@ -77,7 +81,6 @@ const NewRequest = () => {
             <option value="Other">Other...</option>
           </select>
 
-          {/* --- Restored 'Other' logic: Show input if 'Other' is selected --- */}
           {formData.taskDescription === 'Other' && (
             <input 
               placeholder="Please describe your need" 
@@ -94,6 +97,13 @@ const NewRequest = () => {
             <option>🟡 Medium - 2-3 days</option>
             <option>🟢 Low - No rush</option>
           </select>
+
+          <textarea 
+            placeholder="Add side notes / additional details (e.g. gate code, phone before knock, extra item lists)..." 
+            value={formData.sideNotes} 
+            onChange={(e) => setFormData({...formData, sideNotes: e.target.value})} 
+            style={{ padding: '12px', borderRadius: '8px', border: '1px solid #ccc', height: '100px', resize: 'none', fontFamily: 'inherit' }} 
+          />
 
           <button type="submit" style={{ backgroundColor: '#438e5e', color: 'white', padding: '15px', borderRadius: '10px', border: 'none', fontSize: '18px', fontWeight: 'bold', cursor: 'pointer' }}>
             Send Request 🚀

@@ -1,73 +1,68 @@
 const express = require('express');
 const cors = require('cors');
+const bcrypt = require('bcrypt');
 const { poolPromise } = require('./db');
 
 const app = express();
+const saltRounds = 10;
 
-// --- 1. Middleware ---
+// --- Middleware ---
 app.use(express.json()); 
 app.use(cors());         
 
-// --- 2. Home Route ---
 app.get('/', (req, res) => {
     res.send('Aidly Backend API is running! 🚀');
 });
 
-// --- 3. Authentication Routes ---
-
-// Login
+// --- Authentication Routes ---
 app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
     try {
         const pool = await poolPromise;
         const result = await pool.request()
             .input('email', email)
-            .input('pass', password)
-            .query('SELECT * FROM Users WHERE Email = @email AND PasswordHash = @pass');
+            .query('SELECT * FROM Users WHERE Email = @email');
 
         if (result.recordset.length > 0) {
             const user = result.recordset[0];
+            const isMatch = await bcrypt.compare(password, user.PasswordHash);
+            if (!isMatch) return res.status(401).json({ message: "Invalid email or password" });
+
             res.json({ 
                 message: "Login successful!", 
-                user: { 
-                    fullName: user.FullName, 
-                    role: user.UserRole,
-                    phone: user.Phone || '', 
-                    address: user.Address || '' 
-                } 
+                user: { fullName: user.FullName, role: user.UserRole, phone: user.Phone || '', address: user.Address || '' } 
             });
         } else {
             res.status(401).json({ message: "Invalid email or password" });
         }
-    } catch (err) {
-        res.status(500).send("Database error: " + err.message);
-    }
+    } catch (err) { res.status(500).send("Database error: " + err.message); }
 });
 
-// Register
 app.post('/api/register', async (req, res) => {
-    const { fullName, email, password, role } = req.body;
+    const { fullName, email, password, role, phone, address } = req.body;
     try {
         const pool = await poolPromise;
+        const hashedSecurePassword = await bcrypt.hash(password, saltRounds);
+
+        // Everyone defaults to Pending so the Admin can approve them
         await pool.request()
             .input('name', fullName)
             .input('email', email)
-            .input('pass', password)
+            .input('pass', hashedSecurePassword)
             .input('role', role)
-            .query('INSERT INTO Users (FullName, Email, PasswordHash, UserRole) VALUES (@name, @email, @pass, @role)');
+            .input('phone', phone || '')
+            .input('addr', address || '')
+            .query(`
+                INSERT INTO Users (FullName, Email, PasswordHash, UserRole, Phone, Address, Status) 
+                VALUES (@name, @email, @pass, @role, @phone, @addr, 'Pending')
+            `);
         res.status(201).json({ message: "User registered successfully!" });
-    } catch (err) {
-        res.status(500).send("Error: " + err.message);
-    }
+    } catch (err) { res.status(500).send("Error: " + err.message); }
 });
 
-// --- 4. Help Request Routes ---
-
-// Create Request (With ALL restored inputs)
+// --- Help Request Routes ---
 app.post('/api/requests', async (req, res) => {
-    const { seniorName, phone, address, taskDescription, urgency } = req.body;
-    console.log("New Request Received:", req.body);
-
+    const { seniorName, phone, address, taskDescription, urgency, sideNotes } = req.body;
     try {
         const pool = await poolPromise;
         await pool.request()
@@ -76,69 +71,23 @@ app.post('/api/requests', async (req, res) => {
             .input('addr', address)
             .input('task', taskDescription)
             .input('urgency', urgency)
+            .input('notes', sideNotes || '')
             .query(`
-                INSERT INTO HelpRequests (SeniorName, PhoneNumber, Address, TaskDescription, Urgency, Status) 
-                VALUES (@name, @phone, @addr, @task, @urgency, 'Waiting')
+                INSERT INTO HelpRequests (SeniorName, PhoneNumber, Address, TaskDescription, Urgency, Status, SideNotes) 
+                VALUES (@name, @phone, @addr, @task, @urgency, 'Waiting', @notes)
             `);
-        
-        res.status(201).json({ message: "Saved to SQL! 🚀" });
-    } catch (err) {
-        console.error("SQL INSERT ERROR:", err.message);
-        res.status(500).send("Database Error: " + err.message);
-    }
+        res.status(201).json({ message: "Saved to SQL!" });
+    } catch (err) { res.status(500).send("Database Error: " + err.message); }
 });
 
-// Get Pending Volunteers
-app.get('/api/volunteers/pending', async (req, res) => {
-    try {
-        const pool = await poolPromise;
-        const result = await pool.request()
-            .query("SELECT UserID, FullName, Email FROM Users WHERE UserRole = 'Volunteer' AND Status = 'Pending'");
-        res.json(result.recordset);
-    } catch (err) { res.status(500).send(err.message); }
-});
-
-// Update Volunteer Details
-app.put('/api/volunteers/:id/update', async (req, res) => {
-    const { fullName, email, phone, address } = req.body; 
-    const { id } = req.params;
-    console.log("Data received at backend:", req.body); 
-
-    try {
-        const pool = await poolPromise;
-        await pool.request()
-            .input('id', id)
-            .input('name', fullName)
-            .input('email', email)
-            .input('phone', phone || '')
-            .input('addr', address || '')
-            .query(`
-                UPDATE Users 
-                SET FullName = @name, 
-                    Email = @email, 
-                    Phone = @phone, 
-                    Address = @addr 
-                WHERE UserID = @id
-            `);
-        res.json({ message: "Update Success!" });
-    } catch (err) {
-        console.error("SQL Error:", err.message);
-        res.status(500).send("Database error: " + err.message);
-    }
-});
-
-// Get All Requests
 app.get('/api/requests', async (req, res) => {
     try {
         const pool = await poolPromise;
         const result = await pool.request().query('SELECT * FROM HelpRequests ORDER BY CreatedAt DESC');
         res.json(result.recordset);
-    } catch (err) {
-        res.status(500).send("Error: " + err.message);
-    }
+    } catch (err) { res.status(500).send("Error: " + err.message); }
 });
 
-// Assign a Volunteer
 app.put('/api/requests/:id/assign', async (req, res) => {
     const { volunteerName } = req.body;
     const { id } = req.params;
@@ -149,12 +98,9 @@ app.put('/api/requests/:id/assign', async (req, res) => {
             .input('reqId', id)
             .query("UPDATE HelpRequests SET Status = 'Assigned', AssignedVolunteer = @volName WHERE RequestID = @reqId");
         res.json({ message: "Volunteer assigned!" });
-    } catch (err) {
-        res.status(500).send(err.message);
-    }
+    } catch (err) { res.status(500).send(err.message); }
 });
 
-// Mark Task as Completed
 app.put('/api/requests/:id/complete', async (req, res) => {
     const { id } = req.params;
     try {
@@ -163,112 +109,99 @@ app.put('/api/requests/:id/complete', async (req, res) => {
             .input('reqId', id)
             .query("UPDATE HelpRequests SET Status = 'Completed' WHERE RequestID = @reqId");
         res.json({ message: "Task completed!" });
-    } catch (err) {
-        res.status(500).send(err.message);
-    }
+    } catch (err) { res.status(500).send(err.message); }
 });
 
-// --- 5. User/Volunteer Management ---
-
-// Get Only Active Volunteers
-app.get('/api/volunteers', async (req, res) => {
+// --- Universal User Approval System ---
+app.get('/api/users/pending', async (req, res) => {
     try {
         const pool = await poolPromise;
         const result = await pool.request()
-            .query("SELECT UserID, FullName, Email, Phone, Address FROM Users WHERE UserRole = 'Volunteer' AND Status = 'Active'");
+            .query("SELECT UserID, FullName, Email, UserRole FROM Users WHERE Status = 'Pending'");
         res.json(result.recordset);
-    } catch (err) {
-        res.status(500).send(err.message);
-    }
+    } catch (err) { res.status(500).send(err.message); }
 });
 
-// --- Basic Counts ---
-app.get('/api/stats', async (req, res) => {
-    try {
-        const pool = await poolPromise;
-        const seniors = await pool.request().query("SELECT COUNT(*) as count FROM HelpRequests WHERE Status = 'Waiting'");
-        const volunteers = await pool.request().query("SELECT COUNT(*) as count FROM Users WHERE UserRole = 'Volunteer'");
-        res.json({
-            seniorsWaiting: seniors.recordset[0].count,
-            newVolunteers: volunteers.recordset[0].count
-        });
-    } catch (err) {
-        res.status(500).send(err.message);
-    }
-});
-
-// --- Approve or Reject Volunteer ---
-app.put('/api/volunteers/:id/:action', async (req, res) => {
+app.put('/api/users/:id/:action', async (req, res) => {
     const { id, action } = req.params;
     const newStatus = action === 'approve' ? 'Active' : 'Rejected';
-    console.log(`Processing ${action} for UserID: ${id}`); 
-
     try {
         const pool = await poolPromise;
         await pool.request()
             .input('id', id)
             .query(`UPDATE Users SET Status = '${newStatus}' WHERE UserID = @id`);
-        
-        res.json({ message: `Volunteer ${newStatus} successfully!` });
-    } catch (err) {
-        console.error("SQL Error:", err.message);
-        res.status(500).send(err.message);
-    }
+        res.json({ message: `User ${newStatus} successfully!` });
+    } catch (err) { res.status(500).send(err.message); }
 });
 
-// Advanced Admin Stats (Success Rate & Chart)
-app.get('/api/admin-stats', async (req, res) => {
+// --- Get ALL Active Users (Seniors & Volunteers) ---
+app.get('/api/users/active', async (req, res) => {
     try {
         const pool = await poolPromise;
-        const totalReq = await pool.request().query("SELECT COUNT(*) as total FROM HelpRequests");
-        const compReq = await pool.request().query("SELECT COUNT(*) as comp FROM HelpRequests WHERE Status = 'Completed'");
-        
-        const total = totalReq.recordset[0].total || 1; 
-        const completed = compReq.recordset[0].comp || 0;
-        const successRate = Math.round((completed / total) * 100);
-
-        const chartData = await pool.request().query(`
-            SELECT TOP 5 CAST(CreatedAt AS DATE) as Date, COUNT(*) as Count 
-            FROM HelpRequests 
-            GROUP BY CAST(CreatedAt AS DATE) 
-            ORDER BY Date DESC
-        `);
-
-        res.json({
-            successRate: successRate + "%",
-            chartValues: chartData.recordset.map(row => row.Count).reverse()
-        });
-    } catch (err) {
-        res.status(500).send(err.message);
-    }
+        const result = await pool.request()
+            .query("SELECT UserID, FullName, Email, Phone, Address, UserRole FROM Users WHERE Status = 'Active'");
+        res.json(result.recordset);
+    } catch (err) { res.status(500).send(err.message); }
 });
 
-// --- 6. ADDED: Survey Feedback Submission Route ---
-app.post('/api/feedback', async (req, res) => {
-    const { requestId, volunteerName, rating, comments } = req.body;
-    console.log("Feedback data received at backend:", req.body);
-
+// --- Update ANY User's Info ---
+app.put('/api/users/:id/update', async (req, res) => {
+    const { fullName, email, phone, address } = req.body; 
+    const { id } = req.params;
     try {
         const pool = await poolPromise;
         await pool.request()
-            .input('reqId', requestId)
-            .input('volName', volunteerName)
-            .input('rating', rating)
-            .input('comments', comments || '')
-            .query(`
-                INSERT INTO Feedback (RequestID, VolunteerName, Rating, Comments)
-                VALUES (@reqId, @volName, @rating, @comments)
-            `);
-        res.status(201).json({ message: "Feedback saved to SQL server database successfully!" });
-    } catch (err) {
-        console.error("SQL INSERT FEEDBACK ERROR:", err.message);
-        res.status(500).send("Database Error: " + err.message);
-    }
+            .input('id', id)
+            .input('name', fullName)
+            .input('email', email)
+            .input('phone', phone || '')
+            .input('addr', address || '')
+            .query(`UPDATE Users SET FullName = @name, Email = @email, Phone = @phone, Address = @addr WHERE UserID = @id`);
+        res.json({ message: "User Info Updated Successfully!" });
+    } catch (err) { res.status(500).send("Database error: " + err.message); }
 });
 
-// --- 7. Start the Server ---
+// --- UPDATED STATS ROUTE ---
+app.get('/api/stats', async (req, res) => {
+    try {
+        const pool = await poolPromise;
+        const waiting = await pool.request().query("SELECT COUNT(*) as count FROM HelpRequests WHERE Status = 'Waiting'");
+        const assigned = await pool.request().query("SELECT COUNT(*) as count FROM HelpRequests WHERE Status = 'Assigned'");
+        const completed = await pool.request().query("SELECT COUNT(*) as count FROM HelpRequests WHERE Status = 'Completed'");
+        const volunteers = await pool.request().query("SELECT COUNT(*) as count FROM Users WHERE UserRole = 'Volunteer'");
+        
+        res.json({
+            pending: waiting.recordset[0].count,
+            ongoing: assigned.recordset[0].count,
+            completed: completed.recordset[0].count,
+            volunteers: volunteers.recordset[0].count
+        });
+    } catch (err) { res.status(500).send(err.message); }
+});
+
+app.get('/api/admin-stats', async (req, res) => {
+    try {
+        const pool = await poolPromise;
+        const chartData = await pool.request().query(`
+            SELECT TOP 5 CAST(CreatedAt AS DATE) as Date, COUNT(*) as Count 
+            FROM HelpRequests GROUP BY CAST(CreatedAt AS DATE) ORDER BY Date DESC
+        `);
+        res.json({ chartValues: chartData.recordset.map(row => row.Count).reverse() });
+    } catch (err) { res.status(500).send(err.message); }
+});
+
+app.post('/api/feedback', async (req, res) => {
+    const { requestId, reviewerName, rating, comments, role } = req.body;
+    try {
+        const pool = await poolPromise;
+        await pool.request()
+            .input('reqId', requestId).input('reviewerName', reviewerName).input('rating', rating).input('comments', comments || '').input('role', role)
+            .query(`INSERT INTO Feedback (RequestID, VolunteerName, Rating, Comments, CreatorRole) VALUES (@reqId, @reviewerName, @rating, @comments, @role)`);
+        res.status(201).json({ message: "Feedback saved!" });
+    } catch (err) { res.status(500).send(err.message); }
+});
+
 const PORT = 5000;
 app.listen(PORT, () => {
     console.log(`🚀 Aidly Server is running on http://localhost:${PORT}`);
-    console.log(`📡 Waiting for SQL Server connection...`);
 });
