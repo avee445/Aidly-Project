@@ -31,12 +31,12 @@ const ManageVolunteers = () => {
     };
 
     const handleEditClick = (user) => {
-        setEditingUser(user.UserID);
+        setEditingUser(user.userId);
         setEditForm({ 
-            fullName: user.FullName, 
-            email: user.Email, 
-            phone: user.Phone || '', 
-            address: user.Address || '' 
+            fullName: user.fullName, 
+            email: user.email, 
+            phone: user.phone || '', 
+            address: user.address || '' 
         });
     };
 
@@ -60,7 +60,7 @@ const ManageVolunteers = () => {
     // NEW: Dynamically filter the users list based on the active button
     const filteredUsers = users.filter(user => {
         if (filter === 'All') return true;
-        return user.UserRole === filter;
+        return user.userRole === filter;
     });
 
     return (
@@ -113,24 +113,24 @@ const ManageVolunteers = () => {
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                             {/* We map over filteredUsers instead of the main users array */}
                             {filteredUsers.map(user => (
-                                <div key={user.UserID} style={{ display: 'flex', flexDirection: 'column', padding: '20px', border: '1px solid #ddd', borderRadius: '10px' }}>
+                                <div key={user.userId} style={{ display: 'flex', flexDirection: 'column', padding: '20px', border: '1px solid #ddd', borderRadius: '10px' }}>
                                     
-                                    {editingUser !== user.UserID ? (
+                                    {editingUser !== user.userId ? (
                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                             <div>
                                                 <h4 style={{ margin: '0 0 5px 0', fontSize: '18px', color: '#333' }}>
-                                                    {user.FullName} 
+                                                    {user.fullName} 
                                                     <span style={{ 
                                                         marginLeft: '10px', padding: '3px 8px', borderRadius: '5px', fontSize: '12px', fontWeight: 'bold',
-                                                        backgroundColor: user.UserRole === 'Senior' ? '#e3f2fd' : '#f0fff4',
-                                                        color: user.UserRole === 'Senior' ? '#0d47a1' : '#1e7e48'
+                                                        backgroundColor: user.userRole === 'Senior' ? '#e3f2fd' : '#f0fff4',
+                                                        color: user.userRole === 'Senior' ? '#0d47a1' : '#1e7e48'
                                                     }}>
-                                                        {user.UserRole}
+                                                        {user.userRole}
                                                     </span>
                                                 </h4>
-                                                <div style={{ color: '#666', fontSize: '14px', marginBottom: '3px' }}><strong>Email:</strong> {user.Email}</div>
-                                                <div style={{ color: '#666', fontSize: '14px', marginBottom: '3px' }}><strong>Phone:</strong> {user.Phone || 'N/A'}</div>
-                                                <div style={{ color: '#666', fontSize: '14px' }}><strong>Address:</strong> {user.Address || 'N/A'}</div>
+                                                <div style={{ color: '#666', fontSize: '14px', marginBottom: '3px' }}><strong>Email:</strong> {user.email}</div>
+                                                <div style={{ color: '#666', fontSize: '14px', marginBottom: '3px' }}><strong>Phone:</strong> {user.phone || 'N/A'}</div>
+                                                <div style={{ color: '#666', fontSize: '14px' }}><strong>Address:</strong> {user.address || 'N/A'}</div>
                                             </div>
                                             <button onClick={() => handleEditClick(user)} style={{ backgroundColor: '#f0ad4e', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
                                                 ✏️ Edit
@@ -138,14 +138,14 @@ const ManageVolunteers = () => {
                                         </div>
                                     ) : (
                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                                            <h4 style={{ margin: '0 0 10px 0', color: '#1e7e48' }}>Editing {user.UserRole}: {user.FullName}</h4>
+                                            <h4 style={{ margin: '0 0 10px 0', color: '#1e7e48' }}>Editing {user.userRole}: {user.fullName}</h4>
                                             <input type="text" value={editForm.fullName} onChange={(e) => setEditForm({...editForm, fullName: e.target.value})} placeholder="Full Name" style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
                                             <input type="email" value={editForm.email} onChange={(e) => setEditForm({...editForm, email: e.target.value})} placeholder="Email" style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
                                             <input type="text" value={editForm.phone} onChange={(e) => setEditForm({...editForm, phone: e.target.value})} placeholder="Phone Number" style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
                                             <input type="text" value={editForm.address} onChange={(e) => setEditForm({...editForm, address: e.target.value})} placeholder="Home Address" style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
                                             
                                             <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-                                                <button onClick={() => handleSave(user.UserID)} style={{ backgroundColor: '#1e7e48', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
+                                                <button onClick={() => handleSave(user.userId)} style={{ backgroundColor: '#1e7e48', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
                                                     Save Changes
                                                 </button>
                                                 <button onClick={() => setEditingUser(null)} style={{ backgroundColor: '#ccc', color: '#333', border: 'none', padding: '10px 20px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>

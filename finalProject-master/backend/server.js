@@ -8,7 +8,7 @@ const saltRounds = 10;
 
 // --- Middleware ---
 app.use(express.json()); 
-app.use(cors());         
+app.use(cors());        
 
 app.get('/', (req, res) => {
     res.send('Aidly Backend API is running! 🚀');
@@ -116,8 +116,15 @@ app.put('/api/requests/:id/complete', async (req, res) => {
 app.get('/api/users/pending', async (req, res) => {
     try {
         const pool = await poolPromise;
-        const result = await pool.request()
-            .query("SELECT UserID, FullName, Email, UserRole FROM Users WHERE Status = 'Pending'");
+        const result = await pool.request().query(`
+            SELECT 
+                UserID AS userId, 
+                FullName AS fullName, 
+                Email AS email, 
+                UserRole AS userRole 
+            FROM Users 
+            WHERE Status = 'Pending'
+        `);
         res.json(result.recordset);
     } catch (err) { res.status(500).send(err.message); }
 });
@@ -138,8 +145,17 @@ app.put('/api/users/:id/:action', async (req, res) => {
 app.get('/api/users/active', async (req, res) => {
     try {
         const pool = await poolPromise;
-        const result = await pool.request()
-            .query("SELECT UserID, FullName, Email, Phone, Address, UserRole FROM Users WHERE Status = 'Active'");
+        const result = await pool.request().query(`
+            SELECT 
+                UserID AS userId, 
+                FullName AS fullName, 
+                Email AS email, 
+                Phone AS phone, 
+                Address AS address, 
+                UserRole AS userRole 
+            FROM Users 
+            WHERE Status = 'Active'
+        `);
         res.json(result.recordset);
     } catch (err) { res.status(500).send(err.message); }
 });
@@ -190,12 +206,37 @@ app.get('/api/admin-stats', async (req, res) => {
     } catch (err) { res.status(500).send(err.message); }
 });
 
+// --- Feedback Routes ---
+app.get('/api/feedback', async (req, res) => {
+    console.log('GET /api/feedback hit');
+    try {
+        const pool = await poolPromise;
+        const result = await pool.request().query(`
+            SELECT 
+                FeedbackID AS feedbackId, 
+                RequestID AS requestId, 
+                VolunteerName AS volunteerName, 
+                Rating AS rating, 
+                Comments AS comments, 
+                CreatorRole AS creatorRole
+            FROM Feedback
+            ORDER BY FeedbackID DESC
+        `);
+        res.json(result.recordset);
+    } catch (err) { res.status(500).send(err.message); }
+});
+
 app.post('/api/feedback', async (req, res) => {
+    console.log('POST /api/feedback hit');
     const { requestId, reviewerName, rating, comments, role } = req.body;
     try {
         const pool = await poolPromise;
         await pool.request()
-            .input('reqId', requestId).input('reviewerName', reviewerName).input('rating', rating).input('comments', comments || '').input('role', role)
+            .input('reqId', requestId)
+            .input('reviewerName', reviewerName)
+            .input('rating', rating)
+            .input('comments', comments || '')
+            .input('role', role)
             .query(`INSERT INTO Feedback (RequestID, VolunteerName, Rating, Comments, CreatorRole) VALUES (@reqId, @reviewerName, @rating, @comments, @role)`);
         await pool.request()
             .input('reqId', requestId)
@@ -205,6 +246,7 @@ app.post('/api/feedback', async (req, res) => {
 });
 
 const PORT = 5000;
+
 app.listen(PORT, () => {
     console.log(`🚀 Aidly Server is running on http://localhost:${PORT}`);
 });

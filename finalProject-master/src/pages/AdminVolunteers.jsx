@@ -55,23 +55,23 @@ const AdminVolunteers = () => {
                     {pendingUsers.length > 0 ? (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                             {pendingUsers.map(user => (
-                                <div key={user.UserID} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px', border: '1px solid #ddd', borderRadius: '10px' }}>
+                                <div key={user.userId} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px', border: '1px solid #ddd', borderRadius: '10px' }}>
                                     <div>
-                                        <h4 style={{ margin: '0 0 5px 0', fontSize: '18px', color: '#333' }}>{user.FullName}</h4>
-                                        <div style={{ color: '#666', fontSize: '14px', marginBottom: '5px' }}>Email: {user.Email}</div>
+                                        <h4 style={{ margin: '0 0 5px 0', fontSize: '18px', color: '#333' }}>{user.fullName}</h4>
+                                        <div style={{ color: '#666', fontSize: '14px', marginBottom: '5px' }}>Email: {user.email}</div>
                                         <div style={{ 
                                             display: 'inline-block', padding: '5px 10px', borderRadius: '5px', fontSize: '12px', fontWeight: 'bold',
-                                            backgroundColor: user.UserRole === 'Senior' ? '#e3f2fd' : '#f0fff4',
-                                            color: user.UserRole === 'Senior' ? '#0d47a1' : '#1e7e48'
+                                            backgroundColor: user.userRole === 'Senior' ? '#e3f2fd' : '#f0fff4',
+                                            color: user.userRole === 'Senior' ? '#0d47a1' : '#1e7e48'
                                         }}>
-                                            Role: {user.UserRole}
+                                            Role: {user.userRole}
                                         </div>
                                     </div>
                                     <div style={{ display: 'flex', gap: '10px' }}>
-                                        <button onClick={() => handleAction(user.UserID, 'approve')} style={{ backgroundColor: '#1e7e48', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
+                                        <button onClick={() => handleAction(user.userId, 'approve')} style={{ backgroundColor: '#1e7e48', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
                                             Approve
                                         </button>
-                                        <button onClick={() => handleAction(user.UserID, 'reject')} style={{ backgroundColor: '#d9534f', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
+                                        <button onClick={() => handleAction(user.userId, 'reject')} style={{ backgroundColor: '#d9534f', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
                                             Reject
                                         </button>
                                     </div>
