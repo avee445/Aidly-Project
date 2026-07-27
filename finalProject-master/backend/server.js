@@ -197,6 +197,9 @@ app.post('/api/feedback', async (req, res) => {
         await pool.request()
             .input('reqId', requestId).input('reviewerName', reviewerName).input('rating', rating).input('comments', comments || '').input('role', role)
             .query(`INSERT INTO Feedback (RequestID, VolunteerName, Rating, Comments, CreatorRole) VALUES (@reqId, @reviewerName, @rating, @comments, @role)`);
+        await pool.request()
+            .input('reqId', requestId)
+            .query(`UPDATE HelpRequests SET IsRated = 1 WHERE RequestID = @reqId`);    
         res.status(201).json({ message: "Feedback saved!" });
     } catch (err) { res.status(500).send(err.message); }
 });
