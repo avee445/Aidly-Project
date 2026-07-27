@@ -67,6 +67,7 @@ const SeniorDashboard = () => {
                   {req.Status}
                 </div>
                 {req.Status === 'Completed' && (!req.IsRated || req.IsRated === 0) && (
+                {req.Status === 'Completed'&& !req.IsRated & (
                   <button onClick={() => navigate(`/senior/survey?requestId=${req.RequestID}&partnerName=${req.AssignedVolunteer || 'Volunteer'}`)} style={{ backgroundColor: '#ffc107', border: 'none', padding: '5px 12px', borderRadius: '12px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', marginTop: '5px', color: '#000' }}>
                     ⭐ Rate Volunteer
                   </button>
