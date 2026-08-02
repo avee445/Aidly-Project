@@ -262,8 +262,8 @@ app.post('/api/feedback', async (req, res) => {
     } catch (err) { res.status(500).send(err.message); }
 });
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-    console.log(`🚀 Aidly Server is running on http://localhost:${PORT}`);
+    console.log(`🚀 Aidly Server is running on port ${PORT}`);
 });
