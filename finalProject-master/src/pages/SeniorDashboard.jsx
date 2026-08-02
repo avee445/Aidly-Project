@@ -13,7 +13,7 @@ const SeniorDashboard = () => {
         setCurrentUser(JSON.parse(savedUser));
     }
 
-    fetch('http://127.0.0.1:5000/api/requests')
+    fetch('https://aidly-3wxx.onrender.com/api/requests')
       .then(res => res.json())
       .then(data => {
           const user = JSON.parse(savedUser);

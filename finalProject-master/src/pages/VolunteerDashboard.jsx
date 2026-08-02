@@ -21,7 +21,7 @@ const VolunteerDashboard = () => {
   }, [navigate]);
 
   const fetchData = (volunteerName) => {
-    fetch('http://127.0.0.1:5000/api/requests')
+    fetch('https://aidly-3wxx.onrender.com/api/requests')
       .then(res => res.json())
       .then(data => {
           setAvailableRequests(data.filter(req => req.Status === 'Waiting'));
@@ -31,7 +31,7 @@ const VolunteerDashboard = () => {
   };
 
   const assignTask = (id) => {
-    fetch(`http://127.0.0.1:5000/api/requests/${id}/assign`, {
+    fetch(`https://aidly-3wxx.onrender.com/api/requests/${id}/assign`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ volunteerName: currentUser.fullName })
@@ -42,7 +42,7 @@ const VolunteerDashboard = () => {
   };
 
   const completeTask = (id) => {
-    fetch(`http://127.0.0.1:5000/api/requests/${id}/complete`, {
+    fetch(`https://aidly-3wxx.onrender.com/api/requests/${id}/complete`, {
         method: 'PUT'
     })
     .then(res => res.json())

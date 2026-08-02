@@ -18,7 +18,7 @@ const AdminVolunteers = () => {
     const fetchPendingUsers = async () => {
         try {
             // Pointing to our new universal backend route
-            const res = await fetch('http://127.0.0.1:5000/api/users/pending');
+            const res = await fetch('https://aidly-3wxx.onrender.com/api/users/pending');
             const data = await res.json();
             setPendingUsers(data);
         } catch (err) {
@@ -28,7 +28,7 @@ const AdminVolunteers = () => {
 
     const handleAction = async (id, action) => {
         try {
-            const res = await fetch(`http://127.0.0.1:5000/api/users/${id}/${action}`, {
+            const res = await fetch(`https://aidly-3wxx.onrender.com/api/users/${id}/${action}`, {
                 method: 'PUT'
             });
             if (res.ok) {

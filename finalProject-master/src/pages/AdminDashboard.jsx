@@ -27,12 +27,12 @@ const AdminDashboard = () => {
 
     setCurrentUser(user);
 
-    fetch('http://127.0.0.1:5000/api/stats')
+    fetch('https://aidly-3wxx.onrender.com/api/stats')
       .then((res) => res.json())
       .then((data) => setStats(data))
       .catch((err) => console.log(err));
 
-    fetch('http://127.0.0.1:5000/api/admin-stats')
+    fetch('https://aidly-3wxx.onrender.com/api/admin-stats')
       .then((res) => res.json())
       .then((data) => setAdminStats(data))
       .catch((err) => console.log(err));
@@ -44,7 +44,7 @@ const AdminDashboard = () => {
     const fetchRatings = async () => {
       setLoadingRatings(true);
       try {
-        const res = await fetch('http://127.0.0.1:5000/api/feedback');
+        const res = await fetch('https://aidly-3wxx.onrender.com/api/feedback');
         const data = await res.json();
         setRatings(Array.isArray(data) ? data : []);
       } catch (err) {

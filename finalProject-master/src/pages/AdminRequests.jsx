@@ -24,7 +24,7 @@ const AdminRequests = () => {
 
     const fetchRequests = async () => {
         try {
-            const res = await fetch('http://127.0.0.1:5000/api/requests');
+            const res = await fetch('https://aidly-3wxx.onrender.com/api/requests');
             const data = await res.json();
             setRequests(data);
         } catch (err) {
@@ -33,7 +33,7 @@ const AdminRequests = () => {
     };
     const fetchActiveVolunteers = async () => {
         try {
-            const res = await fetch('http://127.0.0.1:5000/api/users/active');
+            const res = await fetch('https://aidly-3wxx.onrender.com/api/users/active');
             const data = await res.json();
             console.log("Active users fetched:", data); 
             
@@ -52,7 +52,7 @@ const AdminRequests = () => {
         if (!selectedVolunteer) return alert("Please select a volunteer first!");
 
         try {
-            const res = await fetch(`http://127.0.0.1:5000/api/requests/${requestId}/assign`, {
+            const res = await fetch(`https://aidly-3wxx.onrender.com/api/requests/${requestId}/assign`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ volunteerName: selectedVolunteer })
@@ -71,7 +71,7 @@ const AdminRequests = () => {
     const handleForceComplete = async (requestId) => {
         if (window.confirm("Are you sure you want to mark this task as completed?")) {
             try {
-                const res = await fetch(`http://127.0.0.1:5000/api/requests/${requestId}/complete`, {
+                const res = await fetch(`https://aidly-3wxx.onrender.com/api/requests/${requestId}/complete`, {
                     method: 'PUT'
                 });
                 if (res.ok) {

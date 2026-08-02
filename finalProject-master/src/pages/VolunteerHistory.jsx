@@ -12,7 +12,7 @@ const VolunteerHistory = () => {
         const user = JSON.parse(savedUser);
         setCurrentUser(user);
 
-        fetch('http://127.0.0.1:5000/api/requests')
+        fetch('https://aidly-3wxx.onrender.com/api/requests')
           .then(res => res.json())
           .then(data => {
               // Only show tasks that are assigned to THIS volunteer and are COMPLETED

@@ -22,7 +22,7 @@ const ManageVolunteers = () => {
 
     const fetchActiveUsers = async () => {
         try {
-            const res = await fetch('http://127.0.0.1:5000/api/users/active');
+            const res = await fetch('https://aidly-3wxx.onrender.com/api/users/active');
             const data = await res.json();
             setUsers(data);
         } catch (err) {
@@ -42,7 +42,7 @@ const ManageVolunteers = () => {
 
     const handleSave = async (id) => {
         try {
-            const res = await fetch(`http://127.0.0.1:5000/api/users/${id}/update`, {
+            const res = await fetch(`https://aidly-3wxx.onrender.com/api/users/${id}/update`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(editForm)
