@@ -97,7 +97,24 @@ app.put('/api/requests/:id/assign', async (req, res) => {
             .input('volName', volunteerName)
             .input('reqId', id)
             .query("UPDATE HelpRequests SET Status = 'Assigned', AssignedVolunteer = @volName WHERE RequestID = @reqId");
-        res.json({ message: "Volunteer assigned!" });
+        res.json({ message: "Volunteer Assigned!" });
+    } catch (err) { res.status(500).send(err.message); }
+});
+
+// --- Get All Active Volunteers for Assignment ---
+app.get('/api/volunteers/active', async (req, res) => {
+    try {
+        const pool = await poolPromise;
+        const result = await pool.request().query(`
+            SELECT 
+                UserID AS userId, 
+                FullName AS fullName, 
+                Email AS email, 
+                Phone AS phone 
+            FROM Users 
+            WHERE UserRole = 'Volunteer' AND Status = 'Active'
+        `);
+        res.json(result.recordset);
     } catch (err) { res.status(500).send(err.message); }
 });
 

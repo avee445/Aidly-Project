@@ -41,7 +41,8 @@ function App() {
         {/* נתיבי מתנדב */}
         <Route path="/volunteer" element={<VolunteerDashboard />} />
         <Route path="/volunteer/history" element={<VolunteerHistory />} />
-
+        <Route path="/volunteer/survey" element={<Survey />} />
+           
         {/* נתיבי קשיש - שים לב ששניהם משתמשים ב-NewRequest */}
         <Route path="/senior" element={<SeniorDashboard />} />
         <Route path="/senior/new-request" element={<NewRequest />} />

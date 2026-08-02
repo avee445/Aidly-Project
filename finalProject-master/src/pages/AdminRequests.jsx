@@ -31,18 +31,22 @@ const AdminRequests = () => {
             console.error("Error fetching requests:", err);
         }
     };
-
     const fetchActiveVolunteers = async () => {
         try {
-            // Using the universal active users route we created earlier
             const res = await fetch('http://127.0.0.1:5000/api/users/active');
             const data = await res.json();
-            // Filter to only get Volunteers for the dropdown assignment menu
-            setVolunteers(data.filter(user => user.UserRole === 'Volunteer'));
+            console.log("Active users fetched:", data); 
+            
+            setVolunteers(data.filter(user => 
+                (user.userRole && user.userRole.toLowerCase() === 'volunteer') || 
+                (user.UserRole && user.UserRole.toLowerCase() === 'volunteer')
+            ));
         } catch (err) {
             console.error("Error fetching volunteers:", err);
         }
     };
+
+   
 
     const handleAssign = async (requestId) => {
         if (!selectedVolunteer) return alert("Please select a volunteer first!");
@@ -165,9 +169,12 @@ const AdminRequests = () => {
                                                     >
                                                         <option value="">Select Volunteer...</option>
                                                         {volunteers.map(v => (
-                                                            <option key={v.UserID} value={v.FullName}>{v.FullName}</option>
+                                                            <option key={v.userId || v.UserID} value={v.fullName || v.FullName}>
+                                                                {v.fullName || v.FullName}
+                                                            </option>
                                                         ))}
                                                     </select>
+                                                     
                                                     <div style={{ display: 'flex', gap: '5px' }}>
                                                         <button onClick={() => handleAssign(req.RequestID)} style={{ flex: 1, backgroundColor: '#1e7e48', color: 'white', border: 'none', padding: '8px', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>Save</button>
                                                         <button onClick={() => setAssigningId(null)} style={{ flex: 1, backgroundColor: '#ccc', border: 'none', padding: '8px', borderRadius: '5px', cursor: 'pointer' }}>Cancel</button>
