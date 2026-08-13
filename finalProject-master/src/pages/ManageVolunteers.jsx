@@ -8,7 +8,7 @@ const ManageVolunteers = () => {
     const [editingUser, setEditingUser] = useState(null);
     const [editForm, setEditForm] = useState({ fullName: '', email: '', phone: '', address: '' });
     
-    // NEW: State to track which filter is active ('All', 'Senior', or 'Volunteer')
+    // State to track which filter is active ('All', 'Senior', or 'Volunteer')
     const [filter, setFilter] = useState('All'); 
 
     const API_BASE = import.meta.env.VITE_API_BASE || 'http://127.0.0.1:5000';
@@ -34,12 +34,8 @@ const ManageVolunteers = () => {
 
     const handleEditClick = (user) => {
         setEditingUser(user.userId);
-        setEditForm({ 
-            fullName: user.fullName, 
-            email: user.email, 
-            phone: user.phone || '', 
-            address: user.address || '' 
-        });
+        // FIX: Copy the ENTIRE user object so we don't lose the role or status!
+        setEditForm({ ...user }); 
     };
 
     const handleSave = async (id) => {
@@ -59,7 +55,7 @@ const ManageVolunteers = () => {
         }
     };
 
-    // NEW: Dynamically filter the users list based on the active button
+    // Dynamically filter the users list based on the active button
     const filteredUsers = users.filter(user => {
         if (filter === 'All') return true;
         return user.userRole === filter;
@@ -76,7 +72,7 @@ const ManageVolunteers = () => {
             <main style={{ flex: 1, padding: '40px 20px', maxWidth: '900px', margin: '0 auto', width: '100%' }}>
                 <h2 style={{ fontSize: '28px', color: '#333', marginBottom: '20px' }}>Active System Users</h2>
                 
-                {/* --- NEW: Filter Buttons --- */}
+                {/* --- Filter Buttons --- */}
                 <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
                     <button 
                         onClick={() => setFilter('All')}
@@ -113,7 +109,6 @@ const ManageVolunteers = () => {
                 <div style={{ backgroundColor: 'white', borderRadius: '15px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', padding: '20px' }}>
                     {filteredUsers.length > 0 ? (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                            {/* We map over filteredUsers instead of the main users array */}
                             {filteredUsers.map(user => (
                                 <div key={user.userId} style={{ display: 'flex', flexDirection: 'column', padding: '20px', border: '1px solid #ddd', borderRadius: '10px' }}>
                                     
@@ -141,10 +136,12 @@ const ManageVolunteers = () => {
                                     ) : (
                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                                             <h4 style={{ margin: '0 0 10px 0', color: '#1e7e48' }}>Editing {user.userRole}: {user.fullName}</h4>
-                                            <input type="text" value={editForm.fullName} onChange={(e) => setEditForm({...editForm, fullName: e.target.value})} placeholder="Full Name" style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
-                                            <input type="email" value={editForm.email} onChange={(e) => setEditForm({...editForm, email: e.target.value})} placeholder="Email" style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
-                                            <input type="text" value={editForm.phone} onChange={(e) => setEditForm({...editForm, phone: e.target.value})} placeholder="Phone Number" style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
-                                            <input type="text" value={editForm.address} onChange={(e) => setEditForm({...editForm, address: e.target.value})} placeholder="Home Address" style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
+                                            
+                                            {/* FIX: Added fallback values (|| '') to prevent controlled input errors */}
+                                            <input type="text" value={editForm.fullName || ''} onChange={(e) => setEditForm({...editForm, fullName: e.target.value})} placeholder="Full Name" style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
+                                            <input type="email" value={editForm.email || ''} onChange={(e) => setEditForm({...editForm, email: e.target.value})} placeholder="Email" style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
+                                            <input type="text" value={editForm.phone || ''} onChange={(e) => setEditForm({...editForm, phone: e.target.value})} placeholder="Phone Number" style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
+                                            <input type="text" value={editForm.address || ''} onChange={(e) => setEditForm({...editForm, address: e.target.value})} placeholder="Home Address" style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
                                             
                                             <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
                                                 <button onClick={() => handleSave(user.userId)} style={{ backgroundColor: '#1e7e48', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
