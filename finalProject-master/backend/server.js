@@ -146,6 +146,24 @@ app.get('/api/users/pending', async (req, res) => {
     } catch (err) { res.status(500).send(err.message); }
 });
 
+// --- Update ANY User's Info (must be checked before action routes)
+app.put('/api/users/:id/update', async (req, res) => {
+    const { fullName, email, phone, address } = req.body; 
+    const { id } = req.params;
+    try {
+        const pool = await poolPromise;
+        await pool.request()
+            .input('id', id)
+            .input('name', fullName)
+            .input('email', email)
+            .input('phone', phone || '')
+            .input('addr', address || '')
+            .query(`UPDATE Users SET FullName = @name, Email = @email, Phone = @phone, Address = @addr WHERE UserID = @id`);
+        res.json({ message: "User Info Updated Successfully!" });
+    } catch (err) { res.status(500).send("Database error: " + err.message); }
+});
+
+// --- Approve / Reject User ---
 app.put('/api/users/:id/:action', async (req, res) => {
     const { id, action } = req.params;
     if (!['approve', 'reject'].includes(action)) {
