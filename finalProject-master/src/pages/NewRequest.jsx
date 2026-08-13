@@ -78,6 +78,7 @@ const NewRequest = () => {
             <option>Pharmacy / Medicines</option>
             <option>Home Repair</option>
             <option>Technical Support</option>
+            <option value="tech2">Technical Sup2port</option>
             <option value="Other">Other...</option>
           </select>
 
@@ -90,7 +91,8 @@ const NewRequest = () => {
               style={{ padding: '12px', borderRadius: '8px', border: '2px solid #438e5e' }} 
             />
           )}
-
+          
+         
           <select required value={formData.urgency} onChange={(e) => setFormData({...formData, urgency: e.target.value})} style={{ padding: '12px', borderRadius: '8px', border: '1px solid #ccc' }}>
             <option value="">Select urgency</option>
             <option>🔴 High - Immediate</option>
