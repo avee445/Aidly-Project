@@ -11,6 +11,8 @@ const ManageVolunteers = () => {
     // NEW: State to track which filter is active ('All', 'Senior', or 'Volunteer')
     const [filter, setFilter] = useState('All'); 
 
+    const API_BASE = import.meta.env.VITE_API_BASE || 'http://127.0.0.1:5000';
+
     useEffect(() => {
         const savedUser = localStorage.getItem('aidlyUser');
         if (!savedUser || JSON.parse(savedUser).role !== 'Admin') {
@@ -22,7 +24,7 @@ const ManageVolunteers = () => {
 
     const fetchActiveUsers = async () => {
         try {
-            const res = await fetch('https://aidly-3wxx.onrender.com/api/users/active');
+            const res = await fetch(`${API_BASE}/api/users/active`);
             const data = await res.json();
             setUsers(data);
         } catch (err) {
@@ -42,7 +44,7 @@ const ManageVolunteers = () => {
 
     const handleSave = async (id) => {
         try {
-            const res = await fetch(`https://aidly-3wxx.onrender.com/api/users/${id}/update`, {
+            const res = await fetch(`${API_BASE}/api/users/${id}/update`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(editForm)
