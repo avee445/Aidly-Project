@@ -146,8 +146,11 @@ app.get('/api/users/pending', async (req, res) => {
     } catch (err) { res.status(500).send(err.message); }
 });
 
-app.put('/api/users/:id/:action(approve|reject)', async (req, res) => {
+app.put('/api/users/:id/:action', async (req, res) => {
     const { id, action } = req.params;
+    if (!['approve', 'reject'].includes(action)) {
+        return res.status(400).json({ message: 'Invalid action' });
+    }
     const newStatus = action === 'approve' ? 'Active' : 'Rejected';
     try {
         const pool = await poolPromise;
